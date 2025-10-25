@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Constituição Inteligente</title>
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .placeholder-black::placeholder {
+            color: #000000 !important;
+            font-weight: bold;
+        }
+
+        .slogan-contornado {
+            font-family: Arial, sans-serif;
+            font-weight: 900;
+            
+            -webkit-text-stroke: 2px #FFCC29;
+            
+            -webkit-text-fill-color: transparent;
+
+            text-stroke: 10px #FFCC29;
+            text-fill-color: transparent;
+            color: #FFCC29;
+        }
+
+        .text-shadow-custom {
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+        }
+
+        .search-card {
+            background: #f8fafc;
+            color: #1e293b;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 100%;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e293b;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .legal-base {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .summary {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #334155;
+            margin-bottom: 8px;
+            flex-grow: 1;
+        }
+
+        .view-full {
+            font-size: 14px;
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            text-align: center;
+            margin: 8px 0;
+        }
+
+        .view-full:hover {
+            text-decoration: underline;
+        }
+
+        .search-header {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-grid {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 16px;
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 16px;
+        }
+
+        .card-grid::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .card-grid::-webkit-scrollbar-thumb {
+            background-color: #a3a3a3;
+            border-radius: 4px;
+        }
+
+        .card-grid::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+        }
+
+        .summarize-btn {
+            background-color: #1e293b;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            display: block;
+            text-align: center;
+            margin: 0 auto 8px auto;
+        }
+
+        .summarize-btn:hover {
+            background-color: #15202b;
+        }
+
+        .save-btn {
+            background-color: transparent;
+            color: #1e293b;
+            padding: 4px 8px;
+            border: 1px solid #1e293b;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.3s, background-color 0.3s;
+            margin-left: 8px;
+        }
+
+        .save-btn.saved {
+            background-color: #1e293b;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background-color: #15202b;
+            color: white;
+        }
+
+        .card-actions {
+            text-align: center;
+            padding-bottom: 16px;
+        }
+
+        /* Estilos para ícones do Font Awesome */
+        .header-icon {
+            color: white; /* Cor branca para ícones no header azul */
+            margin-right: 4px;
+        }
+
+        .search-header-icon {
+            color: #1e293b; /* Cor azul escuro para ícones no header de busca */
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const Header = ({ onNavigate }) => (
+            <header className="bg-blue-900 text-white p-4 flex justify-between items-center fixed w-full top-0 z-10 h-16">
+                <div className="flex items-center">
+                    <img src="./images/logo LexIA.png" alt="LexiA Logo" className="h-20 max-h-full" />
+                </div>
+                <nav className="flex items-center w-full">
+                    <div className="flex justify-center flex-1 space-x-4">
+                        <a href="#" onClick={() => onNavigate('common-searches')} className="hover:underline">
+                            <i className="fas fa-search header-icon"></i> Buscas comuns
+                        </a>
+                        <a href="#" onClick={() => onNavigate('saved')} className="hover:underline">
+                            <i className="fas fa-save header-icon"></i> Salvos
+                        </a>
+                    </div>
+                    <div className="space-x-4">
+                        <a href="#" onClick={() => onNavigate('home')} className="hover:underline">Início</a>
+                        <a href="#" onClick={() => onNavigate('info')} className="hover:underline">Informações</a>
+                    </div>
+                </nav>
+            </header>
+        );
+
+        const CommonSearches = () => (
+            <main className="relative bg-white min-h-screen flex flex-col items-center pt-16 pb-8">
+                <div className="w-full max-w-4xl px-6">
+                    <div className="search-header">
+                        <i className="fas fa-search search-header-icon" style={{ fontSize: '40px' }}></i>
+                        Buscas Comuns:
+                    </div>
+                    
+                    <div className="search-card">
+                        <div className="card-header">
+                            <div className="card-title">Todos são iguais perante a lei?</div>
+                        </div>
+                        <div className="legal-base">Base legal: Caput do Art. 5º da CF/88 → "Todos são iguais perante a lei, sem distinção de qualquer natureza."</div>
+                        <div className="summary">Resumo: Este artigo consagra o princípio da igualdade ao afirmar que todos são iguais perante a lei, sem qualquer forma de discriminação. Este princípio é fundamental para a democracia e garante que não haja privilégios ou discriminações baseadas em raça, sexo, cor, idade, origem, religião, orientação sexual ou qualquer outra condição. Ver completo</div>
+                        <a href="#" className="view-full">Ver completo</a>
+                    </div>
+
+                    <div className="search-card">
+                        <div className="card-header">
+                            <div className="card-title">Homens e mulheres têm os mesmos direitos?</div>
+                        </div>
+                        <div className="legal-base">Base legal: Art. 5º, inciso I da CF/88 → "Homens e mulheres são iguais em direitos e obrigações, nos termos desta Constituição."</div>
+                        <div className="summary">Resumo: O artigo estabelece o princípio da igualdade entre homens e mulheres em direitos e obrigações. Este dispositivo garante que não pode haver distinção ou discriminação de gênero no exercício de direitos civis, políticos, sociais ou trabalhistas. Ver completo</div>
+                        <a href="#" className="view-full">Ver completo</a>
+                    </div>
+
+                    <div className="search-card">
+                        <div className="card-header">
+                            <div className="card-title">O que é habeas corpus?</div>
+                        </div>
+                        <div className="legal-base">Base legal: Art. 5º, inciso LXVIII da CF/88 → "Conceder-se-á habeas corpus sempre que alguém sofrer ou se achar ameaçado de sofrer violência ou coação em sua liberdade de locomoção."</div>
+                        <div className="summary">Resumo: O habeas corpus é uma garantia constitucional que protege a liberdade de locomoção, sendo utilizado para proteger uma pessoa contra prisão ou ameaça ilegal. Pode ser solicitado por qualquer pessoa em nome de outrem. Ver completo</div>
+                        <a href="#" className="view-full">Ver completo</a>
+                    </div>
+                </div>
+            </main>
+        );
+
+        const Saved = () => {
+            const [savedStates, setSavedStates] = useState([false, false, false]);
+
+            const toggleSave = (index) => {
+                const newSavedStates = [...savedStates];
+                newSavedStates[index] = !newSavedStates[index];
+                setSavedStates(newSavedStates);
+                // Lógica de salvamento/desalvamento aqui
+            };
+
+            return (
+                <main className="relative bg-white min-h-screen flex flex-col items-center pt-16 pb-8">
+                    <div className="w-full max-w-4xl px-6">
+                        <div className="search-header">
+                            <i className="fas fa-save search-header-icon" style={{ fontSize: '40px' }}></i>
+                            Salvos:
+                        </div>
+                        <div className="card-grid">
+                            <div className="search-card">
+                                <div className="card-header">
+                                    <div className="card-title">Todos são iguais perante a lei?</div>
+                                    <button className={`save-btn ${savedStates[0] ? 'saved' : ''}`} onClick={() => toggleSave(0)}>
+                                        <i className="fas fa-star"></i> {/* Ícone de estrela para salvar */}
+                                    </button>
+                                </div>
+                                <div className="legal-base">Base legal: Caput do Art. 5º da CF/88 → "Todos são iguais perante a lei, sem distinção de qualquer natureza."</div>
+                                <div className="summary">Resumo: Este artigo consagra o princípio da igualdade ao afirmar que todos são iguais perante a lei, sem qualquer forma de discriminação. Este princípio é fundamental para a democracia e garante que não haja privilégios ou discriminações baseadas em raça, sexo, cor, idade, origem, religião, orientação sexual ou qualquer outra condição.</div>
+                                <div className="card-actions">
+                                    <button className="summarize-btn" onClick={() => { /* Funcionalidade futura */ }}>Resumir com IA</button>
+                                    <a href="#" className="view-full">Ver completo</a>
+                                </div>
+                            </div>
+                            <div className="search-card">
+                                <div className="card-header">
+                                    <div className="card-title">Homens e mulheres têm os mesmos direitos?</div>
+                                    <button className={`save-btn ${savedStates[1] ? 'saved' : ''}`} onClick={() => toggleSave(1)}>
+                                        <i className="fas fa-star"></i>
+                                    </button>
+                                </div>
+                                <div className="legal-base">Base legal: Art. 5º, inciso I da CF/88 → "Homens e mulheres são iguais em direitos e obrigações, nos termos desta Constituição."</div>
+                                <div className="summary">Resumo: O artigo estabelece o princípio da igualdade entre homens e mulheres em direitos e obrigações. Este dispositivo garante que não pode haver distinção ou discriminação de gênero no exercício de direitos civis, políticos, sociais ou trabalhistas.</div>
+                                <div className="card-actions">
+                                    <button className="summarize-btn" onClick={() => { /* Funcionalidade futura */ }}>Resumir com IA</button>
+                                    <a href="#" className="view-full">Ver completo</a>
+                                </div>
+                            </div>
+                            <div className="search-card">
+                                <div className="card-header">
+                                    <div className="card-title">O que é liberdade de expressão?</div>
+                                    <button className={`save-btn ${savedStates[2] ? 'saved' : ''}`} onClick={() => toggleSave(2)}>
+                                        <i className="fas fa-star"></i>
+                                    </button>
+                                </div>
+                                <div className="legal-base">Base legal: Art. 5º, inciso IV da CF/88 → "É livre a manifestação do pensamento, sendo vedado o anonimato."</div>
+                                <div className="summary">Resumo: Este artigo garante a liberdade de expressão como um direito fundamental, permitindo que todos expressem suas opiniões, mas proíbe o anonimato para responsabilização. É essencial para a democracia, com limites para evitar abusos.</div>
+                                <div className="card-actions">
+                                    <button className="summarize-btn" onClick={() => { /* Funcionalidade futura */ }}>Resumir com IA</button>
+                                    <a href="#" className="view-full">Ver completo</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            );
+        };
+
+        const Info = () => (
+            <main className="relative bg-blue-700 text-white min-h-screen flex flex-col items-center justify-center mt-16">
+                <div className="absolute inset-0 bg-[url('./images/background.jpg')] bg-cover bg-top opacity-100"></div>
+                <div className="relative z-10 text-center p-6">
+                    <h1 className="text-5xl font-bold text-white mb-6 text-shadow-custom">Informações</h1>
+                    <p className="text-lg text-white mb-4">Mais detalhes sobre o projeto Constituição Inteligente.</p>
+                    <div className="mt-8">
+                        <a href="#" onClick={() => onNavigate('home')} className="text-yellow-400 hover:underline">Voltar para a página inicial</a>
+                    </div>
+                </div>
+            </main>
+        );
+
+        const MainContent = () => (
+            <main className="relative bg-blue-700 text-white min-h-screen flex flex-col items-center justify-center mt-16">
+                <div className="absolute inset-0 bg-[url('./images/background.jpg')] bg-cover bg-top opacity-100"></div>
+                <div className="relative z-10 text-center">   
+                    <h1 className="text-7xl font-bold text-white mb-4 text-shadow-custom">Constituição Inteligente</h1>
+                    <p className="text-3xl slogan-contornado mb-6 text-shadow-custom">Busque e entenda a Constituição Federal</p>
+                    <div className="flex items-center justify-center space-x-4">
+                        <input
+                            type="text"
+                            placeholder="Coloque aqui sua dúvida"
+                            className="p-2 rounded-lg text-black w-64 placeholder-black"
+                        />
+                        <button className="bg-black text-white p-2 rounded-lg">Buscar</button>
+                    </div>
+                </div>
+            </main>
+        );
+
+        const Footer = () => (
+            <footer className="bg-white text-black p-4 flex items-center">
+                <img src="./images/logo.png" alt="Logo" className="w-14 h-auto mr-4" />
+                <p className="flex-1 text-center">© 2025 Constituição Inteligente. Todos os direitos reservados.</p>
+            </footer>
+        );
+
+        const App = () => {
+            const [activeSection, setActiveSection] = useState('home');
+
+            const handleNavigate = (section) => {
+                setActiveSection(section);
+            };
+
+            return (
+                <div className="flex flex-col min-h-screen">
+                    <Header onNavigate={handleNavigate} />
+                    <div className="flex-grow">
+                        {activeSection === 'common-searches' ? <CommonSearches /> :
+                         activeSection === 'saved' ? <Saved /> :
+                         activeSection === 'info' ? <Info /> :
+                         <MainContent />}
+                    </div>
+                    <Footer />
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
