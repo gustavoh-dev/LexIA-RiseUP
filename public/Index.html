@@ -8,6 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .placeholder-black::placeholder {
             color: #000000 !important;
@@ -35,31 +37,44 @@
             background: #f8fafc;
             color: #1e293b;
             border-radius: 8px;
-            padding: 16px; /* Ajustado para 16px conforme a imagem */
+            padding: 16px;
             margin: 0;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 100%; /* Garantir que não exceda o contêiner */
+            max-width: 100%;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
         }
 
         .card-title {
             font-size: 18px;
             font-weight: bold;
             color: #1e293b;
-            margin-bottom: 8px; /* Ajustado para 8px conforme a imagem */
+            margin: 0;
+            flex-grow: 1;
         }
 
         .legal-base {
             font-size: 14px;
             color: #64748b;
-            margin-bottom: 8px; /* Ajustado para 8px */
+            margin-bottom: 8px;
         }
 
         .summary {
             font-size: 14px;
             line-height: 1.5;
             color: #334155;
-            margin-bottom: 8px; /* Ajustado para 8px */
+            margin-bottom: 8px;
+            flex-grow: 1;
         }
 
         .view-full {
@@ -67,6 +82,9 @@
             color: #3b82f6;
             text-decoration: none;
             font-weight: 500;
+            display: block;
+            text-align: center;
+            margin: 8px 0;
         }
 
         .view-full:hover {
@@ -77,23 +95,86 @@
             font-size: 32px;
             font-weight: bold;
             color: #1e293b;
-            margin-bottom: 24px; /* Ajustado para 24px conforme a imagem */
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
-            gap: 8px; /* Ajustado para 8px */
+            gap: 8px;
         }
 
         .card-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px; /* Ajustado para 16px conforme a imagem */
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 16px;
             width: 100%;
+            overflow-x: auto;
+            padding-bottom: 16px;
         }
 
-        @media (max-width: 768px) {
-            .card-grid {
-                grid-template-columns: 1fr;
-            }
+        .card-grid::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .card-grid::-webkit-scrollbar-thumb {
+            background-color: #a3a3a3;
+            border-radius: 4px;
+        }
+
+        .card-grid::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+        }
+
+        .summarize-btn {
+            background-color: #3b82f6;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            display: block;
+            text-align: center;
+            margin: 0 auto 8px auto;
+        }
+
+        .summarize-btn:hover {
+            background-color: #15202b;
+        }
+
+        .save-btn {
+            background-color: transparent;
+            color: #1e293b;
+            padding: 4px 8px;
+            border: 1px solid #1e293b;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.3s, background-color 0.3s;
+            margin-left: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .save-btn.saved {
+            background-color: #1e293b;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background-color: #15202b;
+            color: white;
+        }
+
+        .card-actions {
+            text-align: center;
+            padding-bottom: 16px;
+        }
+
+        .header-icon {
+            color: white;
+            margin-right: 4px;
+        }
+
+        .search-header-icon {
+            color: #1e293b;
         }
     </style>
 </head>
@@ -110,8 +191,12 @@
                 </div>
                 <nav className="flex items-center w-full">
                     <div className="flex justify-center flex-1 space-x-4">
-                        <a href="#" onClick={() => onNavigate('common-searches')} className="hover:underline">🧭 Buscas comuns</a>
-                        <a href="#" onClick={() => onNavigate('saved')} className="hover:underline">💾 Salvos</a>
+                        <a href="#" onClick={() => onNavigate('common-searches')} className="hover:underline">
+                            <i className="fas fa-compass header-icon"></i> Buscas comuns
+                        </a>
+                        <a href="#" onClick={() => onNavigate('saved')} className="hover:underline">
+                            <i className="fas fa-save header-icon"></i> Salvos
+                        </a>
                     </div>
                     <div className="space-x-4">
                         <a href="#" onClick={() => onNavigate('home')} className="hover:underline">Início</a>
@@ -125,26 +210,32 @@
             <main className="relative bg-white min-h-screen flex flex-col items-center pt-16 pb-8">
                 <div className="w-full max-w-4xl px-6">
                     <div className="search-header">
-                        <span style={{ fontSize: '40px' }}>🔍</span>
+                        <i className="fas fa-search search-header-icon" style={{ fontSize: '40px' }}></i>
                         Buscas Comuns:
                     </div>
                     
                     <div className="search-card">
-                        <div className="card-title">Todos são iguais perante a lei?</div>
+                        <div className="card-header">
+                            <div className="card-title">Todos são iguais perante a lei?</div>
+                        </div>
                         <div className="legal-base">Base legal: Caput do Art. 5º da CF/88 → "Todos são iguais perante a lei, sem distinção de qualquer natureza."</div>
                         <div className="summary">Resumo: Este artigo consagra o princípio da igualdade ao afirmar que todos são iguais perante a lei, sem qualquer forma de discriminação. Este princípio é fundamental para a democracia e garante que não haja privilégios ou discriminações baseadas em raça, sexo, cor, idade, origem, religião, orientação sexual ou qualquer outra condição. Ver completo</div>
                         <a href="#" className="view-full">Ver completo</a>
                     </div>
 
                     <div className="search-card">
-                        <div className="card-title">Homens e mulheres têm os mesmos direitos?</div>
+                        <div className="card-header">
+                            <div className="card-title">Homens e mulheres têm os mesmos direitos?</div>
+                        </div>
                         <div className="legal-base">Base legal: Art. 5º, inciso I da CF/88 → "Homens e mulheres são iguais em direitos e obrigações, nos termos desta Constituição."</div>
                         <div className="summary">Resumo: O artigo estabelece o princípio da igualdade entre homens e mulheres em direitos e obrigações. Este dispositivo garante que não pode haver distinção ou discriminação de gênero no exercício de direitos civis, políticos, sociais ou trabalhistas. Ver completo</div>
                         <a href="#" className="view-full">Ver completo</a>
                     </div>
 
                     <div className="search-card">
-                        <div className="card-title">O que é habeas corpus?</div>
+                        <div className="card-header">
+                            <div className="card-title">O que é habeas corpus?</div>
+                        </div>
                         <div className="legal-base">Base legal: Art. 5º, inciso LXVIII da CF/88 → "Conceder-se-á habeas corpus sempre que alguém sofrer ou se achar ameaçado de sofrer violência ou coação em sua liberdade de locomoção."</div>
                         <div className="summary">Resumo: O habeas corpus é uma garantia constitucional que protege a liberdade de locomoção, sendo utilizado para proteger uma pessoa contra prisão ou ameaça ilegal. Pode ser solicitado por qualquer pessoa em nome de outrem. Ver completo</div>
                         <a href="#" className="view-full">Ver completo</a>
@@ -153,30 +244,71 @@
             </main>
         );
 
-        const Saved = () => (
-            <main className="relative bg-white min-h-screen flex flex-col items-center pt-16 pb-8">
-                <div className="w-full max-w-4xl px-6">
-                    <div className="search-header">
-                        <span style={{ fontSize: '40px' }}>💾</span>
-                        Salvos:
-                    </div>
-                    <div className="card-grid">
-                        <div className="search-card">
-                            <div className="card-title">Todos são iguais perante a lei?</div>
-                            <div className="legal-base">Base legal: Caput do Art. 5º da CF/88 → "Todos são iguais perante a lei, sem distinção de qualquer natureza."</div>
-                            <div className="summary">Resumo: Este artigo consagra o princípio da igualdade ao afirmar que todos são iguais perante a lei, sem qualquer forma de discriminação. Este princípio é fundamental para a democracia e garante que não haja privilégios ou discriminações baseadas em raça, sexo, cor, idade, origem, religião, orientação sexual ou qualquer outra condição.</div>
-                            <a href="#" className="view-full">Ver completo</a>
+        const Saved = () => {
+            const [savedStates, setSavedStates] = useState([false, false, false]);
+
+            const toggleSave = (index) => {
+                const newSavedStates = [...savedStates];
+                newSavedStates[index] = !newSavedStates[index];
+                setSavedStates(newSavedStates);
+                // Lógica de salvamento/desalvamento aqui
+            };
+
+            return (
+                <main className="relative bg-white min-h-screen flex flex-col items-center pt-16 pb-8">
+                    <div className="w-full max-w-4xl px-6">
+                        <div className="search-header">
+                            <i className="fas fa-save search-header-icon" style={{ fontSize: '40px' }}></i>
+                            Salvos:
                         </div>
-                        <div className="search-card">
-                            <div className="card-title">Homens e mulheres têm os mesmos direitos?</div>
-                            <div className="legal-base">Base legal: Art. 5º, inciso I da CF/88 → "Homens e mulheres são iguais em direitos e obrigações, nos termos desta Constituição."</div>
-                            <div className="summary">Resumo: O artigo estabelece o princípio da igualdade entre homens e mulheres em direitos e obrigações. Este dispositivo garante que não pode haver distinção ou discriminação de gênero no exercício de direitos civis, políticos, sociais ou trabalhistas.</div>
-                            <a href="#" className="view-full">Ver completo</a>
+                        <div className="card-grid">
+                            <div className="search-card">
+                                <div className="card-header">
+                                    <div className="card-title">Todos são iguais perante a lei?</div>
+                                    <button className={`save-btn ${savedStates[0] ? 'saved' : ''}`} onClick={() => toggleSave(0)}>
+                                        <i className="fas fa-bookmark"></i> {/* Substituído por fa-bookmark */}
+                                    </button>
+                                </div>
+                                <div className="legal-base">Base legal: Caput do Art. 5º da CF/88 → "Todos são iguais perante a lei, sem distinção de qualquer natureza."</div>
+                                <div className="summary">Resumo: Este artigo consagra o princípio da igualdade ao afirmar que todos são iguais perante a lei, sem qualquer forma de discriminação. Este princípio é fundamental para a democracia e garante que não haja privilégios ou discriminações baseadas em raça, sexo, cor, idade, origem, religião, orientação sexual ou qualquer outra condição.</div>
+                                <div className="card-actions">
+                                    <button className="summarize-btn" onClick={() => { /* Funcionalidade futura */ }}>Resumir com IA</button>
+                                    <a href="#" className="view-full">Ver completo</a>
+                                </div>
+                            </div>
+                            <div className="search-card">
+                                <div className="card-header">
+                                    <div className="card-title">Homens e mulheres têm os mesmos direitos?</div>
+                                    <button className={`save-btn ${savedStates[1] ? 'saved' : ''}`} onClick={() => toggleSave(1)}>
+                                        <i className="fas fa-bookmark"></i>
+                                    </button>
+                                </div>
+                                <div className="legal-base">Base legal: Art. 5º, inciso I da CF/88 → "Homens e mulheres são iguais em direitos e obrigações, nos termos desta Constituição."</div>
+                                <div className="summary">Resumo: O artigo estabelece o princípio da igualdade entre homens e mulheres em direitos e obrigações. Este dispositivo garante que não pode haver distinção ou discriminação de gênero no exercício de direitos civis, políticos, sociais ou trabalhistas.</div>
+                                <div className="card-actions">
+                                    <button className="summarize-btn" onClick={() => { /* Funcionalidade futura */ }}>Resumir com IA</button>
+                                    <a href="#" className="view-full">Ver completo</a>
+                                </div>
+                            </div>
+                            <div className="search-card">
+                                <div className="card-header">
+                                    <div className="card-title">O que é liberdade de expressão?</div>
+                                    <button className={`save-btn ${savedStates[2] ? 'saved' : ''}`} onClick={() => toggleSave(2)}>
+                                        <i className="fas fa-bookmark"></i>
+                                    </button>
+                                </div>
+                                <div className="legal-base">Base legal: Art. 5º, inciso IV da CF/88 → "É livre a manifestação do pensamento, sendo vedado o anonimato."</div>
+                                <div className="summary">Resumo: Este artigo garante a liberdade de expressão como um direito fundamental, permitindo que todos expressem suas opiniões, mas proíbe o anonimato para responsabilização. É essencial para a democracia, com limites para evitar abusos.</div>
+                                <div className="card-actions">
+                                    <button className="summarize-btn" onClick={() => { /* Funcionalidade futura */ }}>Resumir com IA</button>
+                                    <a href="#" className="view-full">Ver completo</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </main>
-        );
+                </main>
+            );
+        };
 
         const Info = () => (
             <main className="relative bg-blue-700 text-white min-h-screen flex flex-col items-center justify-center mt-16">
