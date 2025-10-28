@@ -11,6 +11,7 @@
     <!-- Font Awesome CDN para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Existing styles remain the same */
         .placeholder-black::placeholder {
             color: #000000 !important;
             font-weight: bold;
@@ -19,11 +20,8 @@
         .slogan-contornado {
             font-family: Arial, sans-serif;
             font-weight: 900;
-            
             -webkit-text-stroke: 2px #FFCC29;
-            
             -webkit-text-fill-color: transparent;
-
             text-stroke: 10px #FFCC29;
             text-fill-color: transparent;
             color: #FFCC29;
@@ -35,24 +33,24 @@
 
         .search-card {
             background: #f8fafc;
-            color: #1e293b;
+            color: #000000;
             border-radius: 8px;
-            padding: 16px;
+            padding: 8px;
             margin: 0;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 100%;
-            min-height: 200px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
+            height: 100%;
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .card-title {
@@ -61,12 +59,15 @@
             color: #1e293b;
             margin: 0;
             flex-grow: 1;
+            text-align: center;
         }
 
         .legal-base {
             font-size: 14px;
-            color: #64748b;
-            margin-bottom: 8px;
+            color: #000000;
+            margin: 0 0 auto;
+            text-align: justify;
+            flex-grow: 1;
         }
 
         .summary {
@@ -98,6 +99,8 @@
             margin-bottom: 24px;
             display: flex;
             align-items: center;
+            justify-content: center;
+            height: 80px;
             gap: 8px;
         }
 
@@ -176,6 +179,41 @@
         .search-header-icon {
             color: #1e293b;
         }
+
+        .full-width-image {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .contact-form button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .contact-form button:hover {
+            background-color: #15202b;
+        }
     </style>
 </head>
 <body>
@@ -200,7 +238,8 @@
                     </div>
                     <div className="space-x-4">
                         <a href="#" onClick={() => onNavigate('home')} className="hover:underline">Início</a>
-                        <a href="#" onClick={() => onNavigate('info')} className="hover:underline">Informações</a>
+                        <a href="#" onClick={() => onNavigate('info')} className="hover:underline">Sobre nós</a>
+                        <a href="#" onClick={() => onNavigate('contact')} className="hover:underline">Contato</a>
                     </div>
                 </nav>
             </header>
@@ -219,7 +258,7 @@
                             <div className="card-title">Todos são iguais perante a lei?</div>
                         </div>
                         <div className="legal-base">Base legal: Caput do Art. 5º da CF/88 → "Todos são iguais perante a lei, sem distinção de qualquer natureza."</div>
-                        <div className="summary">Resumo: Este artigo consagra o princípio da igualdade ao afirmar que todos são iguais perante a lei, sem qualquer forma de discriminação. Este princípio é fundamental para a democracia e garante que não haja privilégios ou discriminações baseadas em raça, sexo, cor, idade, origem, religião, orientação sexual ou qualquer outra condição. Ver completo</div>
+                        <div className="summary">Resumo: Este artigo consagra o princípio da igualdade ao afirmar que todos são iguais perante a lei, sem qualquer forma de discriminação. Este princípio é fundamental para a democracia e garante que não haja privilégios ou discriminações baseadas em raça, sexo, cor, idade, origem, religião, orientação sexual ou qualquer outra condição.</div>
                         <a href="#" className="view-full">Ver completo</a>
                     </div>
 
@@ -228,7 +267,7 @@
                             <div className="card-title">Homens e mulheres têm os mesmos direitos?</div>
                         </div>
                         <div className="legal-base">Base legal: Art. 5º, inciso I da CF/88 → "Homens e mulheres são iguais em direitos e obrigações, nos termos desta Constituição."</div>
-                        <div className="summary">Resumo: O artigo estabelece o princípio da igualdade entre homens e mulheres em direitos e obrigações. Este dispositivo garante que não pode haver distinção ou discriminação de gênero no exercício de direitos civis, políticos, sociais ou trabalhistas. Ver completo</div>
+                        <div className="summary">Resumo: O artigo estabelece o princípio da igualdade entre homens e mulheres em direitos e obrigações. Este dispositivo garante que não pode haver distinção ou discriminação de gênero no exercício de direitos civis, políticos, sociais ou trabalhistas.</div>
                         <a href="#" className="view-full">Ver completo</a>
                     </div>
 
@@ -237,7 +276,7 @@
                             <div className="card-title">O que é habeas corpus?</div>
                         </div>
                         <div className="legal-base">Base legal: Art. 5º, inciso LXVIII da CF/88 → "Conceder-se-á habeas corpus sempre que alguém sofrer ou se achar ameaçado de sofrer violência ou coação em sua liberdade de locomoção."</div>
-                        <div className="summary">Resumo: O habeas corpus é uma garantia constitucional que protege a liberdade de locomoção, sendo utilizado para proteger uma pessoa contra prisão ou ameaça ilegal. Pode ser solicitado por qualquer pessoa em nome de outrem. Ver completo</div>
+                        <div className="summary">Resumo: O habeas corpus é uma garantia constitucional que protege a liberdade de locomoção, sendo utilizado para proteger uma pessoa contra prisão ou ameaça ilegal. Pode ser solicitado por qualquer pessoa em nome de outrem.</div>
                         <a href="#" className="view-full">Ver completo</a>
                     </div>
                 </div>
@@ -266,7 +305,7 @@
                                 <div className="card-header">
                                     <div className="card-title">Todos são iguais perante a lei?</div>
                                     <button className={`save-btn ${savedStates[0] ? 'saved' : ''}`} onClick={() => toggleSave(0)}>
-                                        <i className="fas fa-bookmark"></i> {/* Substituído por fa-bookmark */}
+                                        <i className="fas fa-bookmark"></i>
                                     </button>
                                 </div>
                                 <div className="legal-base">Base legal: Caput do Art. 5º da CF/88 → "Todos são iguais perante a lei, sem distinção de qualquer natureza."</div>
@@ -311,35 +350,161 @@
         };
 
         const Info = () => (
-            <main className="relative bg-blue-700 text-white min-h-screen flex flex-col items-center justify-center mt-16">
-                <div className="absolute inset-0 bg-[url('./images/background.jpg')] bg-cover bg-top opacity-100"></div>
-                <div className="relative z-10 text-center p-6">
-                    <h1 className="text-5xl font-bold text-white mb-6 text-shadow-custom">Informações</h1>
-                    <p className="text-lg text-white mb-4">Mais detalhes sobre o projeto Constituição Inteligente.</p>
-                    <div className="mt-8">
-                        <a href="#" onClick={() => onNavigate('home')} className="text-yellow-400 hover:underline">Voltar para a página inicial</a>
+            <main className="relative bg-white text-black min-h-screen flex flex-col items-center pt-16 pb-8">
+                <div className="w-full">
+                    <div className="w-full mb-6">
+                        <img src="./images/planario.jpg" alt="Imagem Sobre Nós" className="full-width-image" />
+                    </div>
+                    <div className="px-6 max-w-4xl mx-auto">
+                        <h1 className="text-4xl font-bold text-black mb-6 text-center">Sobre nós</h1>
+                        <h2 className="text-xl font-bold text-black mb-4">Sobre o LexIA:</h2>
+                        <div className="search-card ml-0">
+                            <div className="legal-base">
+                                O LexIA é uma plataforma digital voltada para facilitar o acesso e o entendimento da Constituição Federal Brasileira, utilizando inteligência artificial e linguagem simplificada. Desenvolvido por uma equipe de especialistas em tecnologia, com o objetivo de promover um entendimento jurídico mais acessível, inclusivo e compreensível para qualquer cidadão, independentemente do nível de conhecimento que ele tenha em direito fundamental — e a tecnologia pode ser o elo entre a Constituição e a população.
+                            </div>
+                        </div>
+                        <h2 className="text-xl font-bold text-black mb-4 mt-6">Missão:</h2>
+                        <div className="search-card ml-0">
+                            <div className="legal-base">
+                                Promover o acesso democrático e inclusivo ao conhecimento jurídico, aproximando os cidadãos da Constituição Federal por meio da tecnologia e da linguagem simplificada. Nosso propósito é traduzir termos técnicos e complexos do direito em uma comunicação clara, objetiva e acessível, permitindo que qualquer pessoa, independentemente de seu nível de escolaridade ou familiaridade com o universo jurídico, possa compreender seus direitos e deveres de maneira prática e fortalecendo a democracia e a cidadania plena, para que o cidadão tenha uma relação com a Constituição, tornando-o um instrumento de aprendizado, conscientização e empoderamento social.
+                            </div>
+                        </div>
+                        <h2 className="text-xl font-bold text-black mb-4 mt-6">Valores:</h2>
+                        <div className="search-card ml-0">
+                            <div className="legal-base">
+                                - Acessibilidade: tornar o conteúdo legal compreensível a todos.<br />
+                                - Transparência: oferecer informações seguras e confiáveis.<br />
+                                - Inovação: usar tecnologia para aproximar o cidadão das leis.<br />
+                                - Inclusão: respeitar as diferenças linguísticas e cognitivas.<br />
+                                - Cidadania: incentivar o conhecimento dos direitos e deveres de cada pessoa.
+                            </div>
+                        </div>
+                        <h2 className="text-xl font-bold text-black mb-4 mt-6">Quem somos:</h2>
+                        <div className="search-card ml-0">
+                            <div className="legal-base">
+                                O LexIA foi criado por um grupo de estudantes e pesquisadores inovadores por tecnologia social da informação. Nosso objetivo é unir direito, linguagem e inteligência artificial para facilitar o entendimento da Constituição Federal e fortalecer a relação entre o cidadão e o Estado.
+                            </div>
+                        </div>
+                        <h2 className="text-xl font-bold text-black mb-4 mt-6">Informações Institucionais:</h2>
+                        <div className="search-card ml-0">
+                            <div className="legal-base">
+                                Nome da empresa/projeto: LexIA - Constituição Inteligente<br />
+                                CNPJ: 45.678.123/0001-56 (fictício)<br />
+                                Sede: Recife, Pernambuco - Brasil<br />
+                                Ano de fundação: 2025<br />
+                                Responsável técnico: Equipe de Desenvolvimento LexIA
+                            </div>
+                        </div>
+                        <div className="text-base text-center mx-auto max-w-md mt-6">
+                            <h2 className="text-xl font-bold mb-2">Nos apoie!</h2>
+                            <p className="mb-2">
+                                Quer nos ajudar a tornar o acesso às leis ainda mais simples?<br />
+                                Envie suas sugestões e ideias para <a href="mailto:contato.lexia@gmail.com" className="underline">contato.lexia@gmail.com</a>.<br />
+                                Cada opinião conta para fortalecer a cidadania digital.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </main>
         );
 
-        const MainContent = () => (
-            <main className="relative bg-blue-700 text-white min-h-screen flex flex-col items-center justify-center mt-16">
-                <div className="absolute inset-0 bg-[url('./images/background.jpg')] bg-cover bg-top opacity-100"></div>
-                <div className="relative z-10 text-center">   
-                    <h1 className="text-7xl font-bold text-white mb-4 text-shadow-custom">Constituição Inteligente</h1>
-                    <p className="text-3xl slogan-contornado mb-6 text-shadow-custom">Busque e entenda a Constituição Federal</p>
-                    <div className="flex items-center justify-center space-x-4">
-                        <input
-                            type="text"
-                            placeholder="Coloque aqui sua dúvida"
-                            className="p-2 rounded-lg text-black w-64 placeholder-black"
-                        />
-                        <button className="bg-black text-white p-2 rounded-lg">Buscar</button>
+        const Contact = () => (
+            <main className="relative bg-white text-black min-h-screen flex flex-col items-center pt-16 pb-8">
+                <div className="w-full max-w-4xl px-6">
+                    <div className="search-header">
+                        <i className="fas fa-envelope search-header-icon" style={{ fontSize: '40px' }}></i>
+                        Fale Conosco
+                    </div>
+                    <div className="flex flex-nowrap gap-6 justify-center">
+                        <div className="search-card w-1/3 min-w-[300px]">
+                            <div className="card-title">Mensagem</div>
+                            <div className="contact-form">
+                                <input type="text" placeholder="Nome" />
+                                <input type="email" placeholder="E-mail" />
+                                <textarea placeholder="Sua mensagem" rows="4"></textarea>
+                                <button className="bg-blue-700">Enviar</button>
+                            </div>
+                            <p className="text-center mt-2">Sua mensagem será enviada para: <a href="mailto:suporte.lexia@gmail.com" className="underline">suporte.lexia@gmail.com</a></p>
+                        </div>
+                        <div className="search-card w-1/3 min-w-[300px]">
+                            <div className="card-title">Endereço</div>
+                            <p className="legal-base">Endereço: Avenida das Ondas Claras, nº 742 - Bairro Jardim do Sol, Cidade: Recife - PE, Brasil<br />CEP: 50987-325</p>
+                        </div>
+                        <div className="search-card w-1/3 min-w-[300px]">
+                            <div className="card-title">Dados Institucionais</div>
+                            <p className="legal-base">Nome da empresa/projeto: LexIA - Constituição Inteligente<br />CNPJ: 45.678.123/0001-56 (fictício)<br />Sede: Recife, Pernambuco - Brasil<br />Ano de fundação: 2025<br />Responsável técnico: Equipe de Desenvolvimento LexIA</p>
+                        </div>
+                    </div>
+                    <div className="search-card mt-6">
+                        <div className="card-title">Contatos</div>
+                        <p className="legal-base text-center">E-mail geral: <a href="mailto:contato.lexia@gmail.com" className="underline">contato.lexia@gmail.com</a><br />Suporte técnico: <a href="mailto:suporte.lexia@gmail.com" className="underline">suporte.lexia@gmail.com</a></p>
                     </div>
                 </div>
             </main>
         );
+
+        const SearchResults = ({ searchQuery }) => {
+            const [results] = useState([
+                { title: "Direitos e Deveres Individuais e Coletivos", base: "Art. 5º - Direitos e Deveres Individuais e Coletivos", summary: "Todos são iguais perante a lei, sem distinção de qualquer natureza, garantindo-se aos brasileiros e aos estrangeiros residentes no País a inviolabilidade do direito à vida, à liberdade, à igualdade, à segurança e à propriedade..." },
+                { title: "Princípios Fundamentais", base: "Art. 1º - Princípios Fundamentais", summary: "A República Federativa do Brasil, formada pela união indissolúvel dos Estados e Municípios e do Distrito Federal, constitui-se em Estado Democrático de Direito e tem como fundamentos: I - a soberania; II - a cidadania..." },
+                { title: "Objetivos Fundamentais", base: "Art. 3º - Objetivos Fundamentals", summary: "Constituem objetivos fundamentais da República Federativa do Brasil: I - construir uma sociedade livre, justa e solidária; II - garantir o desenvolvimento nacional; III - erradicar a pobreza..." },
+            ]);
+
+            return (
+                <main className="relative bg-white min-h-screen flex flex-col items-center pt-16 pb-8">
+                    <div className="w-full max-w-4xl px-6">
+                        <div className="search-header">
+                            <i className="fas fa-search search-header-icon" style={{ fontSize: '40px' }}></i>
+                            Resultados: "{searchQuery}"
+                        </div>
+                        <div className="card-grid">
+                            {results.map((result, index) => (
+                                <div key={index} className="search-card">
+                                    <div className="card-header">
+                                        <div className="card-title">{result.title}</div>
+                                    </div>
+                                    <div className="legal-base">Base legal: {result.base}</div>
+                                    <div className="summary">Resumo: {result.summary}</div>
+                                    <button className="summarize-btn">Resumir com IA</button>
+                                    <a href="#" className="view-full">Ver completo</a>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </main>
+            );
+        };
+
+        const MainContent = ({ setSearchQuery, setActiveSection }) => {
+            const [query, setQuery] = useState("");
+
+            const handleSearch = () => {
+                if (query.trim()) {
+                    setSearchQuery(query); // Update the parent state with the search query
+                    setActiveSection('search-results'); // Navigate to search results
+                }
+            };
+
+            return (
+                <main className="relative bg-blue-700 text-white min-h-screen flex flex-col items-center justify-center mt-16">
+                    <div className="absolute inset-0 bg-[url('./images/background.jpg')] bg-cover bg-top opacity-100"></div>
+                    <div className="relative z-10 text-center">   
+                        <h1 className="text-7xl font-bold text-white mb-4 text-shadow-custom">Constituição Inteligente</h1>
+                        <p className="text-3xl slogan-contornado mb-6 text-shadow-custom">Busque e entenda a Constituição Federal</p>
+                        <div className="flex items-center justify-center space-x-4">
+                            <input
+                                type="text"
+                                placeholder="Coloque aqui sua dúvida"
+                                className="p-2 rounded-lg text-black w-64 placeholder-black"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                            />
+                            <button className="bg-black text-white p-2 rounded-lg" onClick={handleSearch}>Buscar</button>
+                        </div>
+                    </div>
+                </main>
+            );
+        };
 
         const Footer = () => (
             <footer className="bg-white text-black p-4 flex items-center">
@@ -350,6 +515,7 @@
 
         const App = () => {
             const [activeSection, setActiveSection] = useState('home');
+            const [searchQuery, setSearchQuery] = useState("");
 
             const handleNavigate = (section) => {
                 setActiveSection(section);
@@ -362,7 +528,9 @@
                         {activeSection === 'common-searches' ? <CommonSearches /> :
                          activeSection === 'saved' ? <Saved /> :
                          activeSection === 'info' ? <Info /> :
-                         <MainContent />}
+                         activeSection === 'contact' ? <Contact /> :
+                         activeSection === 'search-results' ? <SearchResults searchQuery={searchQuery} /> :
+                         <MainContent setSearchQuery={setSearchQuery} setActiveSection={setActiveSection} />}
                     </div>
                     <Footer />
                 </div>
