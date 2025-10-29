@@ -1,0 +1,211 @@
+        .placeholder-black::placeholder {
+            color: #000000 !important;
+            font-weight: bold;
+        }
+
+        .slogan-contornado {
+            font-family: Arial, sans-serif;
+            font-weight: 900;
+            -webkit-text-stroke: 2px #FFCC29;
+            -webkit-text-fill-color: transparent;
+            text-stroke: 10px #FFCC29;
+            text-fill-color: transparent;
+            color: #FFCC29;
+        }
+
+        .text-shadow-custom {
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+        }
+
+        .search-card {
+            background: #f8fafc;
+            color: #000000;
+            border-radius: 8px;
+            padding: 8px;
+            margin: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 100%;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e293b;
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .legal-base {
+            font-size: 14px;
+            color: #000000;
+            margin: 0 0 auto;
+            text-align: justify;
+            flex-grow: 1;
+        }
+
+        .summary {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #334155;
+            margin-bottom: 8px;
+            flex-grow: 1;
+        }
+
+        .view-full {
+            font-size: 14px;
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            text-align: center;
+            margin: 8px 0;
+        }
+
+        .view-full:hover {
+            text-decoration: underline;
+        }
+
+        .search-header {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 80px;
+            gap: 8px;
+        }
+
+        .welcome-header {
+            font-size: 48px;
+            font-weight: bold;
+            color: #1e293b;
+            text-align: center;
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+
+        .card-grid {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 16px;
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 16px;
+        }
+
+        .card-grid::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .card-grid::-webkit-scrollbar-thumb {
+            background-color: #a3a3a3;
+            border-radius: 4px;
+        }
+
+        .card-grid::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+        }
+
+        .summarize-btn {
+            background-color: #3b82f6;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            display: block;
+            text-align: center;
+            margin: 0 auto 8px auto;
+        }
+
+        .summarize-btn:hover {
+            background-color: #15202b;
+        }
+
+        .save-btn {
+            background-color: transparent;
+            color: #1e293b;
+            padding: 4px 8px;
+            border: 1px solid #1e293b;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.3s, background-color 0.3s;
+            margin-left: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .save-btn.saved {
+            background-color: #1e293b;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background-color: #15202b;
+            color: white;
+        }
+
+        .card-actions {
+            text-align: center;
+            padding-bottom: 16px;
+        }
+
+        .header-icon {
+            color: white;
+            margin-right: 4px;
+        }
+
+        .search-header-icon {
+            color: #1e293b;
+        }
+
+        .full-width-image {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .contact-form button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .contact-form button:hover {
+            background-color: #15202b;
+        }
