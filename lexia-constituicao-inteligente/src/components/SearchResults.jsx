@@ -1,39 +1,72 @@
 import React, { useState } from 'react';
 
+const SAVED_ITEMS_KEY = 'savedLexiaItems';
+
+const getSavedItemsArray = () => {
+  const savedData = localStorage.getItem(SAVED_ITEMS_KEY);
+  return savedData ? JSON.parse(savedData) : [];
+};
+
 const SearchResults = ({ setSearchQuery, setActiveSection }) => {
   const [query, setQuery] = useState("");
-  const [savedStates, setSavedStates] = useState({}); // Estado para controlar os itens salvos
 
-  // Lista de resultados
   const [results] = useState([
     { id: 1, title: "Direitos e Deveres Individuais e Coletivos", base: "Art. 5º - Direitos e Deveres Individuais e Coletivos", summary: "Todos são iguais perante a lei, sem distinção de qualquer natureza, garantindo-se aos brasileiros e aos estrangeiros residentes no País a inviolabilidade do direito à vida, à liberdade, à igualdade, à segurança e à propriedade..." },
     { id: 2, title: "Princípios Fundamentais", base: "Art. 1º - Princípios Fundamentais", summary: "A República Federativa do Brasil, formada pela união indissolúvel dos Estados e Municípios e do Distrito Federal, constitui-se em Estado Democrático de Direito e tem como fundamentos: I - a soberania; II - a cidadania..." },
     { id: 3, title: "Objetivos Fundamentais", base: "Art. 3º - Objetivos Fundamentais", summary: "Constituem objetivos fundamentais da República Federativa do Brasil: I - construir uma sociedade livre, justa e solidária; II - garantir o desenvolvimento nacional; III - erradicar a pobreza..." },
   ]);
 
-  // Função para lidar com a busca
+  const getInitialSavedStates = () => {
+
+    const savedItems = getSavedItemsArray();
+    
+    const savedStatesObject = {};
+    savedItems.forEach(item => {
+      savedStatesObject[item.id] = true;
+    });
+    return savedStatesObject;
+  };
+
+  const [savedStates, setSavedStates] = useState(getInitialSavedStates);
+
   const handleSearch = () => {
     if (query.trim()) {
-      setSearchQuery(query); // Atualiza a query no estado pai
+      setSearchQuery(query); 
     }
   };
 
-  // Função para alternar o estado de salvamento
   const toggleSave = (id) => {
+
+    const cardToToggle = results.find(result => result.id === id);
+    if (!cardToToggle) return; 
+
+    const currentSaved = getSavedItemsArray();
+
+    const isAlreadySaved = currentSaved.some(item => item.id === id);
+
+    let newSavedArray;
+    if (isAlreadySaved) {
+
+      newSavedArray = currentSaved.filter(item => item.id !== id);
+    } else {
+
+      newSavedArray = [...currentSaved, cardToToggle];
+    }
+
+    localStorage.setItem(SAVED_ITEMS_KEY, JSON.stringify(newSavedArray));
+
     setSavedStates(prev => ({
       ...prev,
-      [id]: !prev[id]
+      [id]: !isAlreadySaved
     }));
   };
 
-  // Filtra os resultados com base na query
   const filteredResults = results.filter(result =>
     result.title.toLowerCase().includes(query.toLowerCase()) ||
     result.base.toLowerCase().includes(query.toLowerCase()) ||
     result.summary.toLowerCase().includes(query.toLowerCase())
   );
 
-  // ATENÇÃO: Corrigi a sintaxe do 'className' aqui também
   return (
     <main className="relative bg-white min-h-screen flex flex-col items-center pt-16 pb-8">
       <div className="w-full max-w-4xl px-6">

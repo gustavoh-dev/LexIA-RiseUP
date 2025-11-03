@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Note a mudança no caminho da imagem para "/images/..."
 const Header = ({ onNavigate }) => (
   <header className="bg-blue-900 text-white p-4 flex justify-between items-center fixed w-full top-0 z-10 h-16">
     <div className="flex items-center">
