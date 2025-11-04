@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-// 1. Importar todos os nossos componentes
 import Header from './components/Header';
 import Footer from './components/Footer';
 import MainContent from './components/MainContent';
@@ -10,7 +9,6 @@ import Info from './components/Info';
 import Contact from './components/Contact';
 import SearchResults from './components/SearchResults';
 
-// 2. Colar a lógica principal do App
 const App = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [searchQuery, setSearchQuery] = useState("");

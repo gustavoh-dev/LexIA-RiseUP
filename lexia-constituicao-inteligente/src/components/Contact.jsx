@@ -29,7 +29,10 @@ const Contact = () => (
       </div>
       <div className="search-card mt-6">
         <div className="card-title">Contatos</div>
-        <p className="legal-base text-center">E-mail geral: <a href="mailto:contato.lexia@gmail.com" className="underline">contato.lexia@gmail.com</a><br />Suporte técnico: <a href="mailto:suporte.lexia@gmail.com" className="underline">suporte.lexia@gmail.com</a></p>
+        <div className="legal-base text-center flex flex-col gap-1 items-center">
+          <p>E-mail geral: <a href="mailto:contato.lexia@gmail.com" className="underline">contato.lexia@gmail.com</a></p>
+          <p>Suporte técnico: <a href="mailto:suporte.lexia@gmail.com" className="underline">suporte.lexia@gmail.com</a></p>
+        </div>
       </div>
     </div>
   </main>
