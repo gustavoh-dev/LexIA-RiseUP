@@ -4,7 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
-// 1. IMPORTAR O PRETTIER
+
 import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default defineConfig([
@@ -30,6 +30,6 @@ export default defineConfig([
     },
   },
 
-  // 2. ADICIONAR O PRETTIER COMO ÚLTIMO ITEM
+  
   eslintConfigPrettier,
 ])
