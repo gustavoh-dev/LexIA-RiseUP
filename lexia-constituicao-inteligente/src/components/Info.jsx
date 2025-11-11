@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Note a mudança no caminho da imagem
 const Info = () => (
   <main className="relative bg-white text-black min-h-screen flex flex-col items-center pt-16 pb-8">
     <div className="w-full">

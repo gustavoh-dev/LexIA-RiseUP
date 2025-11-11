@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const MainContent = ({ setSearchQuery, setActiveSection }) => {
-  const [query, setQuery] = useState('');
+const MainContent = ({ setSearchQuery, setActiveSection, initialQuery = "" }) => {
+
+  const [query, setQuery] = useState(initialQuery);
+
+  useEffect(() => {
+    setQuery(initialQuery);
+  }, [initialQuery]);
 
   const handleSearch = () => {
     if (query.trim()) {
-      setSearchQuery(query);
-      setActiveSection('search-results');
+
+      setSearchQuery(query); 
+
     }
   };
 
@@ -22,8 +28,16 @@ const MainContent = ({ setSearchQuery, setActiveSection }) => {
             className="p-2 rounded-lg text-black w-96 focus:outline-none focus:ring-2 focus:ring-white"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyPress={(e) => { 
+              if (e.key === 'Enter') {
+                handleSearch();
+              }
+            }}
           />
-          <button className="bg-black text-white p-2 rounded-lg hover:bg-gray-800 transition" onClick={handleSearch}>
+          <button 
+            className="bg-black text-white p-2 rounded-lg hover:bg-gray-800 transition" 
+            onClick={handleSearch}
+          >
             Buscar
           </button>
         </div>
