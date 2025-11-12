@@ -14,7 +14,7 @@ const SearchCard = ({ result, isSaved, onToggleSave, onViewFull }) => {
   const [error, setError] = useState(null);
 
   const handleSummarize = async () => {
-    if (summary) return; // Se já tem resumo, não faz nada
+    if (summary) return; 
 
     setLoading(true);
     setError(null);
@@ -56,7 +56,6 @@ const SearchCard = ({ result, isSaved, onToggleSave, onViewFull }) => {
         {truncateText(result.texto_caput, MAX_SUMMARY_LENGTH)}
       </div>
 
-      {/* ÁREA DO RESUMO IA DENTRO DO CARD */}
       {(summary || loading || error) && (
         <div className="mt-4 p-3 bg-indigo-50 rounded-md text-sm border border-indigo-100">
           {loading && <p className="text-indigo-600 animate-pulse">✨ Gerando resumo com IA...</p>}

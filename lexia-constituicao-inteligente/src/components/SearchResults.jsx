@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SearchCard from './SearchCard'; // Importamos o novo componente
+import SearchCard from './SearchCard'; 
 
 const SAVED_ITEMS_KEY = 'savedLexiaItems';
 
@@ -89,7 +89,7 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
         <div className="card-grid">
           {results.length > 0 ? (
             results.map((result) => (
-              // AQUI ESTÁ A MÁGICA: Usamos o componente SearchCard para cada resultado
+            
               <SearchCard 
                   key={result.id}
                   result={result}
