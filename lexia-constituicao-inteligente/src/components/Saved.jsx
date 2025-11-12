@@ -8,7 +8,7 @@ const getSavedItemsArray = () => {
 };
 
 /**
- * Componente para exibir itens salvos.
+ * 
  * @param {function} onShowFullText
  */
 const Saved = ({ onShowFullText }) => {
@@ -59,7 +59,7 @@ const Saved = ({ onShowFullText }) => {
               <div className="summary">Resumo: {item.texto_caput || item.summary}</div>
               <div className="card-actions">
                 <button className="summarize-btn" onClick={() => { /* Funcionalidade futura */ }}>Resumir com IA</button>
-                {/* 🚨 NOVO CÓDIGO: Conecta o clique à função onShowFullText */}
+               
                 <a 
                     href="#" 
                     className="view-full"

@@ -67,7 +67,7 @@ const FullArticle = ({ article, onNavigate }) => {
         <main className="min-h-screen pt-24 pb-8 flex justify-center bg-gray-50">
             <div className="w-full max-w-4xl px-6">
                 
-                {/* Botão de Voltar */}
+
                 <button 
                     className="flex items-center text-blue-700 hover:text-blue-900 mb-6" 
                     onClick={() => onNavigate('search-results')}
@@ -78,13 +78,13 @@ const FullArticle = ({ article, onNavigate }) => {
                 
                 <div className="bg-white p-6 rounded-lg shadow-xl border border-gray-200">
                     
-                    {/* Exibe o NOVO TÍTULO COMBINADO (Ex: Art. 163. Normas Gerais) */}
+
                     <h1 
                         className="text-2xl text-gray-800 font-bold mb-4" 
                         dangerouslySetInnerHTML={{ __html: finalTitle }} 
                     />
                     
-                    {/* Exibe o conteúdo aninhado (incisos/parágrafos) SE ELE EXISTIR */}
+                 
                     {formattedNestedContent.length > 0 && (
                         <div 
                             className="text-lg text-gray-800 pt-4" 
