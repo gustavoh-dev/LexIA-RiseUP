@@ -1,0 +1,19 @@
+{
+  "name": "backend-proxy",
+  "version": "1.0.0",
+  "type": "module",     
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^...",
+    "cors": "^...",
+    "dotenv": "^...",
+    "express": "^..."
+  }
+}
