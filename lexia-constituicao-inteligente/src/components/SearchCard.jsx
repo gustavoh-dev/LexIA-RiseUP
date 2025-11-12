@@ -9,7 +9,8 @@ const truncateText = (text, maxLength) => {
 };
 
 const SearchCard = ({ result, isSaved, onToggleSave, onViewFull }) => {
-  const [summary, setSummary] = useState('');
+
+  const [summary, setSummary] = useState(null); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -25,11 +26,16 @@ const SearchCard = ({ result, isSaved, onToggleSave, onViewFull }) => {
         body: JSON.stringify({ textoArtigo: result.texto_completo }),
       });
 
-      if (!response.ok) throw new Error('Erro ao gerar resumo');
-      const data = await response.json();
-      setSummary(data.resumo);
+
+      const data = await response.json(); 
+      
+      if (!response.ok) {
+        throw new Error(data.erro || 'Erro ao gerar resumo');
+      }
+
+      setSummary(data); 
     } catch (err) {
-      setError('Não foi possível gerar o resumo agora.');
+      setError(err.message || 'Não foi possível gerar o resumo agora.');
     } finally {
       setLoading(false);
     }
@@ -56,24 +62,45 @@ const SearchCard = ({ result, isSaved, onToggleSave, onViewFull }) => {
         {truncateText(result.texto_caput, MAX_SUMMARY_LENGTH)}
       </div>
 
-      {(summary || loading || error) && (
+      {(loading || error || summary) && (
         <div className="mt-4 p-3 bg-indigo-50 rounded-md text-sm border border-indigo-100">
           {loading && <p className="text-indigo-600 animate-pulse">✨ Gerando resumo com IA...</p>}
           {error && <p className="text-red-500">{error}</p>}
+          
           {summary && (
             <div>
-              <strong className="text-indigo-700 block mb-1">Resumo IA:</strong>
-              <p className="whitespace-pre-wrap text-gray-700">{summary}</p>
+
+              <strong className="text-indigo-700 block mb-2 text-base">
+                {summary.titulo}
+              </strong>
+              
+
+              <p className="whitespace-pre-wrap text-gray-700 mb-3">
+                {summary.resumo}
+              </p>
+              
+
+              <div className="flex flex-wrap gap-2">
+                {summary.palavrasChave.map((palavra, index) => (
+                  <span 
+                    key={index} 
+                    className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-medium"
+                  >
+                    {palavra}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
         </div>
       )}
 
+
       <div className="card-actions">
         <button 
             className="summarize-btn" 
             onClick={handleSummarize}
-            disabled={loading}
+            disabled={loading || summary} 
         >
             {loading ? 'Gerando...' : (summary ? 'Resumo Gerado!' : 'Resumir com IA')}
         </button>
