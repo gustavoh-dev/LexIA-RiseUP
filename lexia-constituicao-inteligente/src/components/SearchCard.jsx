@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-
-const MAX_SUMMARY_LENGTH = 250;
+import React, { useState, useCallback } from 'react';
+import { apiService } from '../services/api';
+import { createSafeHTML } from '../utils/sanitize';
+import { APP_CONFIG } from '../config';
 
 const truncateText = (text, maxLength) => {
     if (!text || text.length <= maxLength) return text;
@@ -14,52 +15,48 @@ const SearchCard = ({ result, isSaved, onToggleSave, onViewFull }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleSummarize = async () => {
-    if (summary) return; 
+  const handleSummarize = useCallback(async () => {
+    if (summary) return;
 
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:5001/api/resumir', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ textoArtigo: result.texto_completo }),
-      });
-
-
-      const data = await response.json(); 
-      
-      if (!response.ok) {
-        throw new Error(data.erro || 'Erro ao gerar resumo');
-      }
-
-      setSummary(data); 
+      const data = await apiService.summarizeArticle(result.texto_completo);
+      setSummary(data);
     } catch (err) {
       setError(err.message || 'Não foi possível gerar o resumo agora.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [result.texto_completo, summary]);
 
   return (
     <div className="search-card">
       <div className="card-header">
-        <div 
+        <div
           className="card-title"
-          dangerouslySetInnerHTML={{ __html: `<strong>${result.artigo_numero}</strong> - ${result.capitulo_estrutura || result.titulo_estrutura}` }}
+          dangerouslySetInnerHTML={createSafeHTML(
+            `<strong>${result.artigo_numero}</strong> - ${result.capitulo_estrutura || result.titulo_estrutura}`
+          )}
         />
-        <button className={`save-btn ${isSaved ? 'saved' : ''}`} onClick={() => onToggleSave(result.id)}>
-          <i className="fas fa-bookmark"></i>
+        <button
+          className={`save-btn ${isSaved ? 'saved' : ''}`}
+          onClick={() => onToggleSave()}
+          aria-label={isSaved ? 'Remover dos salvos' : 'Salvar artigo'}
+        >
+          <i className="fas fa-bookmark" aria-hidden="true"></i>
         </button>
       </div>
-      
+
       <div className="legal-base">
-          Base legal: Art. 
-          <span dangerouslySetInnerHTML={{ __html: `<strong>${result.artigo_numero.replace('Art. ', '').trim()}</strong>` }} />
-      </div> 
+        Base legal: Art.
+        <span dangerouslySetInnerHTML={createSafeHTML(
+          `<strong>${result.artigo_numero.replace('Art. ', '').trim()}</strong>`
+        )} />
+      </div>
 
       <div className="summary">
-        {truncateText(result.texto_caput, MAX_SUMMARY_LENGTH)}
+        {truncateText(result.texto_caput, APP_CONFIG.MAX_SUMMARY_LENGTH)}
       </div>
 
       {(loading || error || summary) && (
@@ -97,14 +94,25 @@ const SearchCard = ({ result, isSaved, onToggleSave, onViewFull }) => {
 
 
       <div className="card-actions">
-        <button 
-            className="summarize-btn" 
-            onClick={handleSummarize}
-            disabled={loading || summary} 
+        <button
+          className="summarize-btn"
+          onClick={handleSummarize}
+          disabled={loading || !!summary}
+          aria-label="Gerar resumo com inteligência artificial"
         >
-            {loading ? 'Gerando...' : (summary ? 'Resumo Gerado!' : 'Resumir com IA')}
+          {loading ? 'Gerando...' : (summary ? 'Resumo Gerado!' : 'Resumir com IA')}
         </button>
-        <a href="#" className="view-full" onClick={(e) => { e.preventDefault(); onViewFull(result); }}>Ver completo</a>
+        <a
+          href="#"
+          className="view-full"
+          onClick={(e) => {
+            e.preventDefault();
+            onViewFull(result);
+          }}
+          aria-label={`Ver artigo completo: ${result.artigo_numero}`}
+        >
+          Ver completo
+        </a>
       </div>
     </div>
   );

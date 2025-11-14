@@ -28,15 +28,17 @@ const MainContent = ({ setSearchQuery, setActiveSection, initialQuery = "" }) =>
             className="p-2 rounded-lg text-black w-96 focus:outline-none focus:ring-2 focus:ring-white"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyPress={(e) => { 
+            onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 handleSearch();
               }
             }}
+            aria-label="Campo de busca da Constituição"
           />
-          <button 
-            className="bg-black text-white p-2 rounded-lg hover:bg-gray-800 transition" 
+          <button
+            className="bg-black text-white p-2 rounded-lg hover:bg-gray-800 transition"
             onClick={handleSearch}
+            aria-label="Buscar na Constituição"
           >
             Buscar
           </button>

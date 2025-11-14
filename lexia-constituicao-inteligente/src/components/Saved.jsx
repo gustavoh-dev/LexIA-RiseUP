@@ -1,30 +1,29 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSavedItems } from '../hooks/useLocalStorage';
+import { createSafeHTML } from '../utils/sanitize';
+import { APP_CONFIG } from '../config';
+import { useToast } from '../hooks/useToast';
 
-const SAVED_ITEMS_KEY = 'savedLexiaItems';
-
-const getSavedItemsArray = () => {
-  const savedData = localStorage.getItem(SAVED_ITEMS_KEY);
-  return savedData ? JSON.parse(savedData) : [];
+const truncateText = (text, maxLength) => {
+  if (!text || text.length <= maxLength) return text;
+  const trimmedString = text.substring(0, maxLength);
+  return trimmedString.substring(0, trimmedString.lastIndexOf(' ')) + '...';
 };
 
 /**
- * 
- * @param {function} onShowFullText
+ * Componente para exibir itens salvos
+ * @param {function} onShowFullText - Função para visualizar artigo completo
  */
 const Saved = ({ onShowFullText }) => {
+  const { savedItems, removeItem } = useSavedItems();
+  const toast = useToast();
+  
+  const hasSavedItems = savedItems.length > 0;
 
-  const [savedItems, setSavedItems] = useState(getSavedItemsArray);
-
-  const toggleSave = (id) => {
-
-    const newSavedArray = savedItems.filter(item => item.id !== id);
-
-    localStorage.setItem(SAVED_ITEMS_KEY, JSON.stringify(newSavedArray));
-
-    setSavedItems(newSavedArray);
-  };
-  
-  const hasSavedItems = savedItems.length > 0;
+  const handleRemove = (id) => {
+    removeItem(id);
+    toast.info('Artigo removido dos salvos');
+  };
 
   return (
     <main className="relative bg-white min-h-screen flex flex-col items-center pt-16 pb-8">
@@ -34,40 +33,62 @@ const Saved = ({ onShowFullText }) => {
           Salvos:
         </div>
         
-        {!hasSavedItems && (
-          <p className="text-center text-gray-500" style={{ marginTop: '1rem' }}>
-            Você ainda não salvou nenhum item.
-          </p>
-        )}
-        <div className="card-grid">
-          
-          {hasSavedItems && savedItems.map((item) => (
-            <div className="search-card" key={item.id}>
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {!hasSavedItems && (
+            <div className="col-span-full">
+              <div className="search-card text-center py-12">
+                <div className="text-6xl mb-4">📚</div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  Nenhum item salvo ainda
+                </h3>
+                <p className="text-gray-600">
+                  Você ainda não salvou nenhum artigo.
+                </p>
+                <p className="text-gray-500 text-sm mt-2">
+                  Use o ícone de marcador nos artigos para salvá-los aqui.
+                </p>
+              </div>
+            </div>
+          )}
+          {hasSavedItems && savedItems.map((item) => (
+            <div className="search-card" key={item.id}>
               <div className="card-header">
-                 <div 
-                    className="card-title"
-                    dangerouslySetInnerHTML={{ __html: `<strong>${item.artigo_numero || item.base}</strong> - ${item.capitulo_estrutura || item.titulo}` }}
-                />
-                <button className="save-btn saved" onClick={() => toggleSave(item.id)}>
-                  <i className="fas fa-bookmark"></i>
-                </button>
+                 <div
+                className="card-title"
+                dangerouslySetInnerHTML={createSafeHTML(
+                  `<strong>${item.artigo_numero || item.base}</strong> - ${item.capitulo_estrutura || item.titulo}`
+                )}
+              />
+              <button
+                className="save-btn saved"
+                onClick={() => handleRemove(item.id)}
+                aria-label="Remover dos salvos"
+              >
+                <i className="fas fa-bookmark" aria-hidden="true"></i>
+              </button>
               </div>
-              <div className="legal-base">
-                    Base legal: Art. 
-                    <span dangerouslySetInnerHTML={{ __html: `<strong>${(item.artigo_numero || item.base).replace('Art. ', '').trim()}</strong>` }} />
-                </div>
-              <div className="summary">Resumo: {item.texto_caput || item.summary}</div>
-              <div className="card-actions">
-                <button className="summarize-btn" onClick={() => { /* Funcionalidade futura */ }}>Resumir com IA</button>
-               
-                <a 
-                    href="#" 
-                    className="view-full"
-                    onClick={(e) => { e.preventDefault(); onShowFullText(item); }}
+              <div className="legal-base">
+                Base legal: Art.
+                <span dangerouslySetInnerHTML={createSafeHTML(
+                  `<strong>${(item.artigo_numero || item.base).replace('Art. ', '').trim()}</strong>`
+                )} />
+              </div>
+              <div className="summary">
+                {truncateText(item.texto_caput || item.summary || '', APP_CONFIG.MAX_SUMMARY_LENGTH)}
+              </div>
+              <div className="card-actions">
+                <a
+                  href="#"
+                  className="view-full"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onShowFullText(item);
+                  }}
+                  aria-label={`Ver artigo completo: ${item.artigo_numero || item.base}`}
                 >
-                    Ver completo
+                  Ver completo
                 </a>
-              </div>
+              </div>
             </div>
           ))}
         </div>

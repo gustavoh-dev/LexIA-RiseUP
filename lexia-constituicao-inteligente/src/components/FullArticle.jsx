@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { createSafeHTML } from '../utils/sanitize';
 
 const formatNestedText = (fullText) => {
     if (!fullText) return '';
@@ -33,11 +34,12 @@ const FullArticle = ({ article, onNavigate }) => {
             <main className="min-h-screen pt-24 pb-8 flex justify-center bg-gray-50">
                 <div className="w-full max-w-4xl px-6 text-center">
                     <h2 className="text-3xl font-bold text-red-600 mb-4">Erro ao carregar o artigo.</h2>
-                    <button 
-                        className="bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-800 transition" 
-                        onClick={() => onNavigate('home')}
+                    <button
+                      className="bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-800 transition"
+                      onClick={() => onNavigate('home')}
+                      aria-label="Voltar à página inicial"
                     >
-                        Voltar ao Início
+                      Voltar ao Início
                     </button>
                 </div>
             </main>
@@ -68,28 +70,29 @@ const FullArticle = ({ article, onNavigate }) => {
             <div className="w-full max-w-4xl px-6">
                 
 
-                <button 
-                    className="flex items-center text-blue-700 hover:text-blue-900 mb-6" 
-                    onClick={() => onNavigate('search-results')}
+                <button
+                  className="flex items-center text-blue-700 hover:text-blue-900 mb-6"
+                  onClick={() => onNavigate('search-results')}
+                  aria-label="Voltar aos resultados da busca"
                 >
-                    <i className="fas fa-arrow-left mr-2"></i>
-                    Voltar aos Resultados
+                  <i className="fas fa-arrow-left mr-2" aria-hidden="true"></i>
+                  Voltar aos Resultados
                 </button>
                 
                 <div className="bg-white p-6 rounded-lg shadow-xl border border-gray-200">
                     
 
-                    <h1 
-                        className="text-2xl text-gray-800 font-bold mb-4" 
-                        dangerouslySetInnerHTML={{ __html: finalTitle }} 
+                    <h1
+                      className="text-2xl text-gray-800 font-bold mb-4"
+                      dangerouslySetInnerHTML={createSafeHTML(finalTitle)}
                     />
                     
                  
                     {formattedNestedContent.length > 0 && (
-                        <div 
-                            className="text-lg text-gray-800 pt-4" 
-                            dangerouslySetInnerHTML={{ __html: formattedNestedContent }} 
-                        />
+                      <div
+                        className="text-lg text-gray-800 pt-4"
+                        dangerouslySetInnerHTML={createSafeHTML(formattedNestedContent)}
+                      />
                     )}
                 </div>
             </div>

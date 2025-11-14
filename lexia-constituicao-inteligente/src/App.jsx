@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Fuse from 'fuse.js';
 
-
-import dadosConstituicaoProcessados from './utils/processaConstituicao'; 
-
+import dadosConstituicaoProcessados from './utils/processaConstituicao';
+import { APP_CONFIG } from './config';
+import { apiService } from './services/api';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -13,19 +13,11 @@ import Saved from './components/Saved';
 import Info from './components/Info';
 import Contact from './components/Contact';
 import SearchResults from './components/SearchResults';
-import FullArticle from './components/FullArticle'; 
-
-const fuseOptions = {
-  keys: [
-    'titulo_estrutura',  
-    'capitulo_estrutura',
-    'artigo_numero',     
-    'texto_caput',       
-    'texto_completo'
-  ],
-  includeScore: true,
-  threshold: 0.3, 
-};
+import FullArticle from './components/FullArticle';
+import ErrorBoundary from './components/ErrorBoundary';
+import ToastContainer from './components/ToastContainer';
+import { useToast } from './hooks/useToast';
+import { useScrollToTop } from './hooks/useScrollToTop';
 
 const App = () => {
   const [activeSection, setActiveSection] = useState('home');
@@ -34,14 +26,18 @@ const App = () => {
   const [selectedArticle, setSelectedArticle] = useState(null); 
   const [fuseInstance, setFuseInstance] = useState(null); 
 
-
   const [summary, setSummary] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [summaryError, setSummaryError] = useState(null);
+  
+  const toast = useToast();
+  
+  // Scroll to top quando muda de seção
+  useScrollToTop(activeSection);
 
   useEffect(() => {
-      const fuse = new Fuse(dadosConstituicaoProcessados, fuseOptions);
-      setFuseInstance(fuse);
+    const fuse = new Fuse(dadosConstituicaoProcessados, APP_CONFIG.FUSE_OPTIONS);
+    setFuseInstance(fuse);
   }, []);
 
   const executeSearch = useCallback((query) => {
@@ -59,68 +55,53 @@ const App = () => {
   }, [searchQuery, executeSearch]); 
 
  
-  const handleSummarizeArticle = async (articleText) => {
+  const handleSummarizeArticle = useCallback(async (articleText) => {
     setIsSummarizing(true);
     setSummary('');
     setSummaryError(null);
 
     try {
-  
-
-      const response = await fetch('http://localhost:5001/api/resumir', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ textoArtigo: articleText }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.erro || 'Erro ao gerar resumo.');
-      }
-
+      const data = await apiService.summarizeArticle(articleText);
       setSummary(data.resumo);
-
+      toast.success('Resumo gerado com sucesso!');
     } catch (error) {
       console.error("Erro no resumo:", error);
- 
-      setSummaryError("Não foi possível conectar ao servidor local (localhost:5001). Certifique-se de que seu backend está rodando.");
+      const errorMessage = error.message || "Não foi possível gerar o resumo. Verifique se o backend está rodando.";
+      setSummaryError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsSummarizing(false);
     }
-  };
+  }, [toast]);
 
 
-  const handleNavigate = (section) => {
-    setSelectedArticle(null); 
-    
-  
+  const handleNavigate = useCallback((section) => {
+    setSelectedArticle(null);
     setSummary('');
     setSummaryError(null);
     
     if (section === 'home') {
-        setSearchQuery(""); 
+      setSearchQuery("");
     }
     
     setActiveSection(section);
-  };
+  }, []);
   
-  const handleShowFullText = (article) => {
-      setSelectedArticle(article);
-
-      setSummary('');
-      setSummaryError(null);
-      setActiveSection('full-article'); 
-  };
-
-  const handleNewSearch = (newQuery) => {
+  const handleShowFullText = useCallback((article) => {
+    setSelectedArticle(article);
+    setSummary('');
+    setSummaryError(null);
+    setActiveSection('full-article');
+  }, []);
+  
+  const handleNewSearch = useCallback((newQuery) => {
     setSearchQuery(newQuery);
-  };
-
-  const handlePrepareSearch = (newQuery) => {
+  }, []);
+  
+  const handlePrepareSearch = useCallback((newQuery) => {
     setSearchQuery(newQuery);
     setActiveSection('home');
-  };
+  }, []);
 
   const renderContent = () => {
     switch (activeSection) {
@@ -145,6 +126,9 @@ const App = () => {
         return (
           <SearchResults 
             fuzzyResults={fuzzyResults}
+            initialQuery={searchQuery}
+            setSearchQuery={handleNewSearch}
+            setActiveSection={setActiveSection}
             onShowFullText={handleShowFullText} 
           />
         );
@@ -172,13 +156,16 @@ const App = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
-      <Header onNavigate={handleNavigate} />
-      <div className="flex-grow">
-        {renderContent()}
+    <ErrorBoundary>
+      <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
+        <Header onNavigate={handleNavigate} />
+        <div className="flex-grow">
+          {renderContent()}
+        </div>
+        <Footer />
+        <ToastContainer toasts={toast.toasts} onRemove={toast.removeToast} />
       </div>
-      <Footer />
-    </div>
+    </ErrorBoundary>
   );
 };
 
