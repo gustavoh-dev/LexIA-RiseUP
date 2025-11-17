@@ -72,4 +72,3 @@ export const analisarArtigo = async (textoArtigo, duvidaUsuario = '') => {
     throw error;
   }
 };
-};
