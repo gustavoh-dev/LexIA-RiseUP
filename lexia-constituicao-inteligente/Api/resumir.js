@@ -31,6 +31,16 @@ const generationConfig = {
 };
 
 export default async function handler(req, res) {
+  // Configurar headers CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Lidar com requisições OPTIONS (preflight)
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   // Permitir apenas método POST
   if (req.method !== 'POST') {
     return res.status(405).json({ erro: 'Método não permitido' });
@@ -46,9 +56,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { textoArtigo, duvidaUsuario } = req.body;
+    // Verificar se o body foi parseado corretamente
+    let body;
+    try {
+      body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    } catch (e) {
+      console.error('Erro ao parsear body:', req.body);
+      return res.status(400).json({ erro: 'Formato de requisição inválido.' });
+    }
+
+    const { textoArtigo, duvidaUsuario } = body || {};
 
     if (!textoArtigo) {
+      res.setHeader('Content-Type', 'application/json');
       return res.status(400).json({ erro: 'Nenhum texto foi fornecido.' });
     }
 
@@ -98,9 +118,11 @@ export default async function handler(req, res) {
 
     try {
       const parsedData = JSON.parse(jsonText);
+      res.setHeader('Content-Type', 'application/json');
       return res.status(200).json(parsedData);
     } catch (e) {
       console.error('Erro ao parsear JSON da IA:', jsonText, e);
+      res.setHeader('Content-Type', 'application/json');
       return res.status(500).json({ 
         erro: "A IA retornou um formato de JSON inválido." 
       });
@@ -116,6 +138,7 @@ export default async function handler(req, res) {
       errorMessage = error.statusText;
     }
     
+    res.setHeader('Content-Type', 'application/json');
     return res.status(500).json({ erro: errorMessage });
   }
 }

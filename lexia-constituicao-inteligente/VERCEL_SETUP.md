@@ -101,15 +101,32 @@ lexia-constituicao-inteligente/
 - Certifique-se de que selecionou todos os ambientes (Production, Preview, Development)
 - Faça um novo deploy após adicionar a variável
 
-### Erro: "Falha ao se comunicar com a IA"
-- Verifique se a API Key está correta
-- Verifique se há créditos disponíveis na conta do Gemini
-- Veja os logs no Vercel: **Deployments** → Seu deploy → **Functions** → **api/resumir**
+### Erro: "Failed to execute 'json' on 'Response': Unexpected end of JSON input"
+Este erro geralmente ocorre quando:
+1. **A variável de ambiente GEMINI_API_KEY não está configurada no Vercel**
+   - Vá em **Settings** → **Environment Variables**
+   - Adicione `GEMINI_API_KEY` com sua chave
+   - Faça um novo deploy após adicionar
+
+2. **A função serverless não está retornando JSON válido**
+   - Verifique os logs no Vercel: **Deployments** → Seu deploy → **Functions** → **api/resumir**
+   - Procure por erros relacionados à API Key ou ao Gemini
+
+3. **A API Key está incorreta ou sem créditos**
+   - Verifique se a chave está correta em: https://aistudio.google.com/app/apikey
+   - Verifique se há créditos disponíveis na conta do Gemini
+
+### Erro: "Falha ao se comunicar com a IA" ou "Resposta vazia do servidor"
+- A função serverless pode não estar sendo executada corretamente
+- Verifique se o arquivo `api/resumir.js` está na raiz do projeto (não dentro de `src/`)
+- Verifique os logs de runtime no Vercel
+- Certifique-se de que a variável `GEMINI_API_KEY` está configurada
 
 ### API não está funcionando
 - Verifique se o arquivo `api/resumir.js` está na raiz do projeto
 - Verifique se a dependência `@google/generative-ai` está no `package.json`
 - Veja os logs de build no Vercel
+- Certifique-se de que o `vercel.json` está configurado corretamente
 
 ## 📚 Recursos Adicionais
 
