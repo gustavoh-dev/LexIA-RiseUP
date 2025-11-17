@@ -12,7 +12,7 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
   const { isItemSaved, toggleItem } = useSavedItems();
   const toast = useToast();
 
-  // Memoiza o processamento dos resultados
+
   const results = useMemo(() => {
     const rawResults = fuzzyResults.filter(r => r.item);
     return rawResults.map(result => ({
@@ -34,7 +34,7 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
     if (query.trim() && setSearchQuery) {
       setIsSearching(true);
       setSearchQuery(query);
-      // Reset loading após um tempo
+ 
       setTimeout(() => setIsSearching(false), 500);
     }
   }, [query, setSearchQuery]);
@@ -54,7 +54,7 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
     }
   }, [onShowFullText]);
 
-  // Memoiza cálculos de paginação
+
   const paginationData = useMemo(() => {
     const totalPages = Math.ceil(results.length / APP_CONFIG.ITEMS_PER_PAGE);
     const indexOfLastItem = currentPage * APP_CONFIG.ITEMS_PER_PAGE;
@@ -77,7 +77,7 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
     setCurrentPage(pageNumber);
   }, []);
 
-  // Memoiza números de página visíveis
+
   const visiblePageNumbers = useMemo(() => {
     if (totalPages <= APP_CONFIG.MAX_VISIBLE_PAGES) {
       return Array.from({ length: totalPages }, (_, i) => i + 1);

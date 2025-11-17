@@ -11,8 +11,8 @@ const truncateText = (text, maxLength) => {
 };
 
 /**
- * Componente para exibir itens salvos
- * @param {function} onShowFullText - Função para visualizar artigo completo
+ * 
+ * @param {function} onShowFullText 
  */
 const Saved = ({ onShowFullText }) => {
   const { savedItems, removeItem } = useSavedItems();

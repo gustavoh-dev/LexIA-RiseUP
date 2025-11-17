@@ -10,9 +10,7 @@ const MainContent = ({ setSearchQuery, setActiveSection, initialQuery = "" }) =>
 
   const handleSearch = () => {
     if (query.trim()) {
-
       setSearchQuery(query); 
-
     }
   };
 
@@ -36,7 +34,8 @@ const MainContent = ({ setSearchQuery, setActiveSection, initialQuery = "" }) =>
             aria-label="Campo de busca da Constituição"
           />
           <button
-            className="bg-black text-white p-2 rounded-lg hover:bg-gray-800 transition"
+           
+            className="bg-black text-white p-2 rounded-lg hover:bg-gray-800 transition duration-100 ease-out active:scale-97 active:brightness-90"
             onClick={handleSearch}
             aria-label="Buscar na Constituição"
           >
