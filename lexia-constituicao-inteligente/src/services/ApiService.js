@@ -1,5 +1,5 @@
 
-const BASE_URL = 'http://localhost:5001';
+import { APP_CONFIG } from '../config';
 
 /**
 
@@ -19,7 +19,7 @@ export const analisarArtigo = async (textoArtigo, duvidaUsuario = '') => {
 
   try {
     
-    const response = await fetch(`${BASE_URL}/api/resumir`, {
+    const response = await fetch(`${APP_CONFIG.API_BASE_URL}/api/resumir`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -118,16 +118,16 @@ const App = () => {
             setSearchQuery={handleNewSearch} 
           />
         );
-      case 'search-results':
-        return (
-          <SearchResults 
-            fuzzyResults={fuzzyResults}
-            initialQuery={searchQuery}
-            setSearchQuery={handleNewSearch}
-            setActiveSection={setActiveSection}
-      _     onShowFullText={handleShowFullText} 
-          />
-        );
+      case 'search-results':
+        return (
+          <SearchResults 
+            fuzzyResults={fuzzyResults}
+            initialQuery={searchQuery}
+            setSearchQuery={handleNewSearch}
+            setActiveSection={setActiveSection}
+            onShowFullText={handleShowFullText} 
+          />
+        );
       case 'full-article':
         return (
             <FullArticle 
@@ -135,23 +135,22 @@ const App = () => {
                 onNavigate={handleNavigate}
             />
         );
-      case 'home':
-      default:
-        return (
-          <MainContent 
-            setSearchQuery={handleNewSearch} 
-s           setActiveSection={setActiveSection}
-          />
-        );
+      case 'home':
+      default:
+        return (
+          <MainContent 
+            setSearchQuery={handleNewSearch} 
+            setActiveSection={setActiveSection}
+          />
+        );
     }
   };
 
   return (
     <ErrorBoundary>
-      <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
-        {isLoadingApp && <FullScreenSpinner message="Preparando busca..." />}
-  nbsp;   
-        <Header onNavigate={handleNavigate} />
+      <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
+        {isLoadingApp && <FullScreenSpinner message="Preparando busca..." />}
+        <Header onNavigate={handleNavigate} />
         <div className="flex-grow">
           {renderContent()}
         </div>
