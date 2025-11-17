@@ -31,31 +31,32 @@ const generationConfig = {
 };
 
 export default async function handler(req, res) {
-  // Configurar headers CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Lidar com requisições OPTIONS (preflight)
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  // Permitir apenas método POST
-  if (req.method !== 'POST') {
-    return res.status(405).json({ erro: 'Método não permitido' });
-  }
-
-  // Verificar se a API key está configurada
-  const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-  if (!GEMINI_API_KEY) {
-    console.error('GEMINI_API_KEY não encontrada nas variáveis de ambiente');
-    return res.status(500).json({ 
-      erro: 'Configuração do servidor incompleta. Entre em contato com o suporte.' 
-    });
-  }
-
   try {
+    // Configurar headers CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Content-Type', 'application/json');
+
+    // Lidar com requisições OPTIONS (preflight)
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
+
+    // Permitir apenas método POST
+    if (req.method !== 'POST') {
+      return res.status(405).json({ erro: 'Método não permitido' });
+    }
+
+    // Verificar se a API key está configurada
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    if (!GEMINI_API_KEY) {
+      console.error('GEMINI_API_KEY não encontrada nas variáveis de ambiente');
+      return res.status(500).json({ 
+        erro: 'Configuração do servidor incompleta. Entre em contato com o suporte.' 
+      });
+    }
+
     // Verificar se o body foi parseado corretamente
     let body;
     try {
@@ -67,8 +68,7 @@ export default async function handler(req, res) {
 
     const { textoArtigo, duvidaUsuario } = body || {};
 
-    if (!textoArtigo) {
-      res.setHeader('Content-Type', 'application/json');
+    if (!textoArtigo || !textoArtigo.trim()) {
       return res.status(400).json({ erro: 'Nenhum texto foi fornecido.' });
     }
 
@@ -118,11 +118,18 @@ export default async function handler(req, res) {
 
     try {
       const parsedData = JSON.parse(jsonText);
-      res.setHeader('Content-Type', 'application/json');
+      
+      // Validar se os dados estão completos
+      if (!parsedData.titulo || !parsedData.resumo || !parsedData.palavrasChave) {
+        console.error('Dados incompletos da IA:', parsedData);
+        return res.status(500).json({ 
+          erro: "A IA retornou dados incompletos. Tente novamente." 
+        });
+      }
+      
       return res.status(200).json(parsedData);
     } catch (e) {
       console.error('Erro ao parsear JSON da IA:', jsonText, e);
-      res.setHeader('Content-Type', 'application/json');
       return res.status(500).json({ 
         erro: "A IA retornou um formato de JSON inválido." 
       });
@@ -131,14 +138,17 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('Erro na API Gemini:', error);
     
-    let errorMessage = error.message || 'Falha ao se comunicar com a IA.';
-    if (error.response && error.response.data && error.response.data.error) {
+    let errorMessage = 'Falha ao se comunicar com a IA.';
+    
+    if (error.message) {
+      errorMessage = error.message;
+    } else if (error.response && error.response.data && error.response.data.error) {
       errorMessage = error.response.data.error.message;
     } else if (error.statusText) {
       errorMessage = error.statusText;
     }
     
-    res.setHeader('Content-Type', 'application/json');
+    // Garantir que sempre retornamos uma resposta válida
     return res.status(500).json({ erro: errorMessage });
   }
 }
