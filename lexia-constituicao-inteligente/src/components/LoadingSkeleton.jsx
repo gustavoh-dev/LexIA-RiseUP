@@ -1,8 +1,6 @@
 import React from 'react';
 
-/**
- * Componente de skeleton loading para cards
- */
+
 export const CardSkeleton = () => {
   return (
     <div className="search-card animate-pulse">
@@ -23,9 +21,7 @@ export const CardSkeleton = () => {
   );
 };
 
-/**
- * Grid de skeletons para resultados
- */
+
 export const ResultsSkeleton = ({ count = 3 }) => {
   return (
     <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
