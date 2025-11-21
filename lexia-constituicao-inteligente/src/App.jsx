@@ -17,107 +17,99 @@ import ErrorBoundary from './components/ErrorBoundary';
 import ToastContainer from './components/ToastContainer';
 import { useToast } from './hooks/useToast';
 import { useScrollToTop } from './hooks/useScrollToTop';
-// 1. Importações Novas
 import { useSearchHistory } from './hooks/useSearchHistory';
 import History from './components/History';
 import { FullScreenSpinner } from './components/Spinner';
 
 const App = () => {
-  const [activeSection, setActiveSection] = useState('home');
-  const [searchQuery, setSearchQuery] = useState("");
-  const [fuzzyResults, setFuzzyResults] = useState([]); 
-  const [selectedArticle, setSelectedArticle] = useState(null); 
-  const [fuseInstance, setFuseInstance] = useState(null); 
+  const [activeSection, setActiveSection] = useState('home');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [fuzzyResults, setFuzzyResults] = useState([]); 
+  const [selectedArticle, setSelectedArticle] = useState(null); 
+  const [fuseInstance, setFuseInstance] = useState(null); 
 
- 
-  const [isLoadingApp, setIsLoadingApp] = useState(true); 
+  const [isLoadingApp, setIsLoadingApp] = useState(true); 
 
-  
-  const { addSearchToHistory } = useSearchHistory();
-  
-  const toast = useToast();
-  
-  useScrollToTop(activeSection);
-
-  useEffect(() => {
-    const fuse = new Fuse(dadosConstituicaoProcessados, APP_CONFIG.FUSE_OPTIONS);
-    setFuseInstance(fuse);
+  const { addSearchToHistory } = useSearchHistory();
   
-    setIsLoadingApp(false); 
-
- 
-
-  }, []);
-
-  const executeSearch = useCallback((query) => {
-    if (query.trim() && fuseInstance) {
-     
-      addSearchToHistory(query.trim());
-      const results = fuseInstance.search(query.trim());
-      setFuzzyResults(results);
-      setActiveSection('search-results');
-    }
-  }, [fuseInstance, addSearchToHistory]); 
-
-  useEffect(() => {
-    if (searchQuery.trim()) {
-        executeSearch(searchQuery);
-    }
-  }, [searchQuery, executeSearch]); 
-
-  
-  const handleNavigate = useCallback((section) => {
-    setSelectedArticle(null);
-
-    if (section === 'home') {
-      setSearchQuery("");
-    }
-    
-    setActiveSection(section);
-  }, []);
-  
-  const handleShowFullText = useCallback((article) => {
+  const toast = useToast();
   
-    setSelectedArticle(article);
+  useScrollToTop(activeSection);
 
-    setActiveSection('full-article');
-  }, []);
-  
-  const handleNewSearch = useCallback((newQuery) => {
-    setSearchQuery(newQuery);
-  }, []);
-  
-  const handlePrepareSearch = useCallback((newQuery) => {
-    setSearchQuery(newQuery);
-    setActiveSection('home');
-  }, []);
+  useEffect(() => {
+    const fuse = new Fuse(dadosConstituicaoProcessados, APP_CONFIG.FUSE_OPTIONS);
+    setFuseInstance(fuse);
+  
+    setIsLoadingApp(false); 
 
-  const renderContent = () => {
-    switch (activeSection) {
-      case 'common-searches':
-        return (
-            <CommonSearches 
-                onNavigate={handleNavigate} 
-                setSearchQuery={handlePrepareSearch} 
-            />
-        );
-      case 'saved':
-        return (
-            <Saved 
-                onShowFullText={handleShowFullText}
-            />
-        );
-      case 'info':
-        return <Info />;
-      case 'contact':
-        return <Contact />;
-      case 'history':
-        return (
-          <History
-            onNavigate={handleNavigate}
-            setSearchQuery={handleNewSearch} 
-          />
-        );
+  }, []);
+
+  const executeSearch = useCallback((query) => {
+    if (query.trim() && fuseInstance) {
+      addSearchToHistory(query.trim());
+      const results = fuseInstance.search(query.trim());
+      setFuzzyResults(results);
+      setActiveSection('search-results');
+    }
+  }, [fuseInstance, addSearchToHistory]); 
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+        executeSearch(searchQuery);
+    }
+  }, [searchQuery, executeSearch]); 
+
+  
+  const handleNavigate = useCallback((section) => {
+    setSelectedArticle(null);
+
+    if (section === 'home') {
+      setSearchQuery("");
+    }
+    
+    setActiveSection(section);
+  }, []);
+  
+  const handleShowFullText = useCallback((article) => {
+    setSelectedArticle(article);
+    setActiveSection('full-article');
+  }, []);
+  
+  const handleNewSearch = useCallback((newQuery) => {
+    setSearchQuery(newQuery);
+  }, []);
+  
+  const handlePrepareSearch = useCallback((newQuery) => {
+    setSearchQuery(newQuery);
+    setActiveSection('home');
+  }, []);
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'common-searches':
+        return (
+            <CommonSearches 
+                onNavigate={handleNavigate} 
+                setSearchQuery={handlePrepareSearch} 
+            />
+        );
+      case 'saved':
+        return (
+            <Saved 
+                onShowFullText={handleShowFullText}
+            />
+        );
+      case 'info':
+        return <Info />;
+      case 'contact':
+        return <Contact />;
+      case 'history':
+        return (
+          <History
+            onNavigate={handleNavigate}
+            setSearchQuery={handleNewSearch} 
+          />
+        );
       case 'search-results':
         return (
           <SearchResults 
@@ -128,13 +120,13 @@ const App = () => {
             onShowFullText={handleShowFullText} 
           />
         );
-      case 'full-article':
-        return (
-            <FullArticle 
-                article={selectedArticle} 
-                onNavigate={handleNavigate}
-            />
-        );
+      case 'full-article':
+        return (
+            <FullArticle 
+                article={selectedArticle} 
+                onNavigate={handleNavigate}
+            />
+        );
       case 'home':
       default:
         return (
@@ -143,22 +135,45 @@ const App = () => {
             setActiveSection={setActiveSection}
           />
         );
-    }
-  };
+    }
+  };
 
-  return (
-    <ErrorBoundary>
+  return (
+    <ErrorBoundary>
       <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
+        <style>{`
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          .animate-fade-in-up {
+            animation: fadeInUp 0.4s ease-out forwards;
+          }
+        `}</style>
+
         {isLoadingApp && <FullScreenSpinner message="Preparando busca..." />}
-        <Header onNavigate={handleNavigate} />
-        <div className="flex-grow">
-          {renderContent()}
-        </div>
-        <Footer />
-        <ToastContainer toasts={toast.toasts} onRemove={toast.removeToast} />
-      </div>
-    </ErrorBoundary>
-  );
+        
+
+        <Header onNavigate={handleNavigate} activeSection={activeSection} />
+
+        <div className="flex-grow pt-16">
+         
+          <div key={activeSection} className="animate-fade-in-up h-full">
+            {renderContent()}
+          </div>
+        </div>
+        
+        <Footer />
+        <ToastContainer toasts={toast.toasts} onRemove={toast.removeToast} />
+      </div>
+    </ErrorBoundary>
+  );
 };
 
 export default App;

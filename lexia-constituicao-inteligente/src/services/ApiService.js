@@ -2,16 +2,41 @@
 import { APP_CONFIG } from '../config';
 
 /**
+ * 
+ * @param {string} query 
+ * @returns {Promise<object>}
+ */
+export const buscarArtigosInteligente = async (query) => {
+  try {
+    const response = await fetch(`${APP_CONFIG.API_BASE_URL}/api/buscar`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query }),
+    });
 
- *
+    if (!response.ok) {
+      throw new Error(`Erro na busca: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+
+  } catch (error) {
+    console.error('Erro ao buscar artigos:', error);
+    
+    return { tipo: 'erro', termo: query };
+  }
+};
+
+/**
+ * 
  * @param {string} textoArtigo
  * @param {string} duvidaUsuario
  * @returns {Promise<object>}
- * @throws {Error} 
  */
 export const analisarArtigo = async (textoArtigo, duvidaUsuario = '') => {
-  
-
   const requestBody = {
     textoArtigo: textoArtigo,
     duvidaUsuario: duvidaUsuario
@@ -27,7 +52,6 @@ export const analisarArtigo = async (textoArtigo, duvidaUsuario = '') => {
       body: JSON.stringify(requestBody),
     });
 
-    // Verificar se a resposta está vazia
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
       const text = await response.text();
@@ -45,7 +69,6 @@ export const analisarArtigo = async (textoArtigo, duvidaUsuario = '') => {
       throw new Error(errorData.erro || `Falha na requisição: ${response.statusText}`);
     }
 
-    // Verificar se há conteúdo antes de fazer parse
     const text = await response.text();
     if (!text || text.trim() === '') {
       throw new Error('Resposta vazia do servidor');
@@ -64,7 +87,6 @@ export const analisarArtigo = async (textoArtigo, duvidaUsuario = '') => {
   } catch (error) {
     console.error('Erro ao chamar a API de análise:', error);
     
-    // Melhorar mensagem de erro para o usuário
     if (error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
       throw new Error('Não foi possível conectar ao servidor. Verifique sua conexão ou se o servidor está online.');
     }
