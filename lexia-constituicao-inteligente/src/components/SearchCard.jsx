@@ -12,7 +12,6 @@ const SearchCard = ({ result, isSaved, onToggleSave, onViewFull, onExpand, isFul
   const [showFullAiSummary, setShowFullAiSummary] = useState(false);
 
   const handleAiAnalysis = useCallback(async () => {
-    // Se não estiver em tela cheia, expande primeiro
     if (!isFullView && onExpand) {
         onExpand(result);
     }
@@ -62,7 +61,7 @@ const SearchCard = ({ result, isSaved, onToggleSave, onViewFull, onExpand, isFul
       }}
       className={`search-card flex flex-col shadow-lg rounded-lg border border-gray-200 transition-all duration-700 ease-in-out bg-white max-h-[85vh]`}
     >
-      {/* HEADER DO CARD */}
+
       <div className="card-header flex-shrink-0 flex justify-between items-center p-5"> 
         <div
           className="card-title flex-grow pr-2 text-2xl font-bold text-gray-900"
@@ -94,7 +93,6 @@ const SearchCard = ({ result, isSaved, onToggleSave, onViewFull, onExpand, isFul
         </div>
       </div>
 
-      {/* CONTEÚDO COM SCROLL */}
       <div className="card-content-scroll flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 px-5 py-2">
         
         <div className="legal-base mb-4 text-gray-500 text-lg font-medium">
@@ -159,13 +157,10 @@ const SearchCard = ({ result, isSaved, onToggleSave, onViewFull, onExpand, isFul
         </div>
       </div>
 
-      {/* FOOTER COM BOTÃO E LINK CORRIGIDOS (SEM SOBREPOSIÇÃO) */}
       <div className="card-actions flex-shrink-0 p-4 mt-2 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
-        
-        {/* Espaçador para centralizar o botão em telas grandes */}
+ 
         <div className="hidden md:block flex-1"></div>
 
-        {/* Botão Centralizado */}
         <div className="flex-none w-full md:w-auto flex justify-center">
             <button
                 className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105 flex items-center shadow-md font-medium text-base whitespace-nowrap"
@@ -184,7 +179,6 @@ const SearchCard = ({ result, isSaved, onToggleSave, onViewFull, onExpand, isFul
             </button>
         </div>
 
-        {/* Link Ver Completo alinhado à direita */}
         <div className="flex-1 flex justify-center md:justify-end w-full md:w-auto">
             <a
             href="#"

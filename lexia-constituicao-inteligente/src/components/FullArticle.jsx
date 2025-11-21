@@ -5,13 +5,11 @@ const formatNestedText = (fullText) => {
   if (!fullText) return '';
   let formattedText = fullText;
 
-  // 1. Artigo/Caput: Negrito (Art. X.)
   formattedText = formattedText.replace(
     /(Art\.\s[0-9]+[A-Z]?\.)/g,
     '<strong>$1</strong>'
   );
 
-  // 2. Parágrafos numerados: <br><br> & 4 espaços & Negrito ( § 1º )
   formattedText = formattedText.replace(
     /(\s§\s[0-9]+º\s)/g,
     '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;<strong>$1</strong>'
@@ -25,31 +23,26 @@ const formatNestedText = (fullText) => {
     '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;<strong>$1</strong>'
   );
 
-  // 3. Parágrafo único: <br><br> & 4 espaços & Negrito
   formattedText = formattedText.replace(
     /(Parágrafo único\.\s)/g,
     '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;<strong>$1</strong>'
   );
 
-  // 4. Incisos (Numerais Romanos): <br> & 6 espaços & Negrito
   formattedText = formattedText.replace(
     /([IVXLCDM]+\s-\s)/g,
     '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>$1</strong>'
   );
 
-  // 5. Alíneas (Letra + ) ): <br> & 8 espaços & Itálico
   formattedText = formattedText.replace(
     /(\s[a-z]\)\s)/g,
     '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>$1</em>'
   );
 
-  // 6. Subalíneas (Números): <br> & 10 espaços & Itálico
   formattedText = formattedText.replace(
     /(\s[0-9]+)\s-\s/g,
     '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>$1 - </em>'
   );
 
-  // Limpeza final
   formattedText = formattedText.replace(/\s+/g, ' ');
   formattedText = formattedText.replace(
     /(\<br\/\>\s*)+\<br\/\>/g,
@@ -62,29 +55,24 @@ const formatNestedText = (fullText) => {
 };
 
 const FullArticle = ({ article, onNavigate }) => {
-  // Estados para a funcionalidade de IA
   const [userDoubt, setUserDoubt] = useState('');
   const [showDoubtInput, setShowDoubtInput] = useState(false);
   const [aiResponse, setAiResponse] = useState(article?.aiData?.respostaDuvida || ''); 
   const [loading, setLoading] = useState(false);
 
-  // Estado para armazenar o objeto de análise da IA
   const [currentAiData, setCurrentAiData] = useState(article.aiData);
 
-  // Sincroniza os estados se o artigo mudar
   useEffect(() => {
     setAiResponse(article?.aiData?.respostaDuvida || '');
     setCurrentAiData(article.aiData);
   }, [article]);
 
-  // --- Função para lidar com o envio da dúvida à IA (via Backend) ---
   const handleAskAI = async () => {
     if (!userDoubt.trim()) {
       setAiResponse('Por favor, digite sua dúvida antes de enviar.');
       return;
     }
     
-    // Verifica se o texto do artigo existe antes de enviar.
     const articleContentToSend = article.texto_completo || '';
     if (!articleContentToSend) {
         setAiResponse('Erro: O conteúdo do artigo está indisponível para análise.');
@@ -94,7 +82,6 @@ const FullArticle = ({ article, onNavigate }) => {
 
 
     setLoading(true);
-    // Limpa a resposta anterior
     setAiResponse(''); 
 
     try {
@@ -104,22 +91,18 @@ const FullArticle = ({ article, onNavigate }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          // 💡 CORREÇÃO APLICADA AQUI: USANDO texto_completo
           textoArtigo: articleContentToSend, 
           duvidaUsuario: userDoubt,
         }),
       });
 
-      // Se a resposta HTTP falhar (4xx, 5xx)
       if (!response.ok) {
-        // Tenta ler o erro do backend se ele existir
         const errorData = await response.json().catch(() => ({ erro: 'Erro desconhecido do servidor.' }));
         throw new Error(errorData.erro || `Falha HTTP: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
-      
-      // Atualiza os dados da IA (se o resumo for retornado)
+
       setCurrentAiData({
         titulo: data.titulo,
         resumo: data.resumo,
@@ -127,7 +110,6 @@ const FullArticle = ({ article, onNavigate }) => {
         respostaDuvida: data.respostaDuvida,
       });
 
-      // Define a resposta para exibição
       setAiResponse(data.respostaDuvida || "A IA não retornou uma resposta para esta dúvida."); 
 
     } catch (error) {
@@ -143,8 +125,6 @@ const FullArticle = ({ article, onNavigate }) => {
     setLoading(false);
     setUserDoubt(''); 
   };
-  // -------------------------------------------------------------------
-
 
   if (!article) {
     return (
@@ -173,7 +153,6 @@ const FullArticle = ({ article, onNavigate }) => {
 
   let nestedContent = '';
   if (!isRevogado && fullText.length > textoCaput.length) {
-    // Lógica robusta para encontrar o final do caput no fullText
     const caputOnly = textoCaput.replace(/Art\.\s[0-9]+[A-Z]?\.\s/, '').trim();
     
     let caputEndIndex = -1;
@@ -223,10 +202,8 @@ const FullArticle = ({ article, onNavigate }) => {
             </div>
           ) : (
             <>
-              {/* Conteúdo do Caput */}
               <p className="text-lg text-gray-800 mb-4">{textoCaput}</p>
 
-              {/* Conteúdo Aninhado Formatado */}
               {formattedNestedContent.length > 0 && (
                 <div
                   className="text-lg text-gray-800 pt-4"
@@ -234,14 +211,12 @@ const FullArticle = ({ article, onNavigate }) => {
                 />
               )}
 
-              {/* Seção de Dúvidas/IA */}
               <div className="mt-6 pt-6 border-t border-indigo-100">
                 {!showDoubtInput && (
                   <button
                     className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition flex items-center shadow-md"
                     onClick={() => {
                        setShowDoubtInput(true);
-                       // Se não houver análise prévia, limpa a resposta para a caixa ficar limpa
                        if (!currentAiData) {
                           setAiResponse('');
                        }
@@ -299,13 +274,11 @@ const FullArticle = ({ article, onNavigate }) => {
                 )}
               </div>
             
-              {/* Bloco de Análise IA e Resposta da Dúvida */}
               {(currentAiData || aiResponse) && (
                 <div className="mt-6 pt-6 border-t border-indigo-100">
                  
                  
 
-                  {/* Resposta à Dúvida do Usuário */}
                   {aiResponse && (
                     <div className={`pt-4 ${currentAiData ? 'border-t border-gray-100 mt-4' : ''}`}>
                       <strong className="text-blue-600 block mb-1">
@@ -317,7 +290,6 @@ const FullArticle = ({ article, onNavigate }) => {
                     </div>
                   )}
 
-                  {/* Palavras Chave */}
                   {currentAiData && (
                     <div className="flex flex-wrap gap-2 mt-4">
                       {currentAiData.palavrasChave.map((palavra, index) => (

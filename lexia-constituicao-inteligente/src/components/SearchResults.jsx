@@ -15,61 +15,42 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
   const { isItemSaved, toggleItem } = useSavedItems();
   const toast = useToast();
 
-  // --- FILTRO MATEMÁTICO EXATO ---
   const results = useMemo(() => {
-    // 1. Normaliza os dados recebidos (garante que temos objetos limpos)
     const rawResults = fuzzyResults.map(r => r.item || r);
-
     const q = (initialQuery || "").toLowerCase().trim();
-
-    // 2. Extrai TODOS os números da string de busca
-    // Ex: "Art. 4" -> ["4"]
-    // Ex: "Art. 5 Art. 6" -> ["5", "6"] (Vindo da IA)
-    // Ex: "4" -> ["4"]
     const matchesNumeros = q.match(/(\d+)/g);
 
-    // SE TIVER NÚMERO NA BUSCA, ATIVA O MODO ESTRITO
     if (matchesNumeros && matchesNumeros.length > 0) {
-        
-        // Converte strings para números inteiros (4, 5, 6)
         const numerosBuscados = matchesNumeros.map(n => parseInt(n, 10));
-
         const exatos = rawResults.filter(item => {
             if (!item.artigo_numero) return false;
-
-            // Limpa o número do artigo no banco de dados
-            // "Art. 48" -> 48
-            // "Art. 4º" -> 4
             const numeroDoItem = parseInt(item.artigo_numero.toString().replace(/\D/g, ''), 10);
-
-            // VERIFICAÇÃO MATEMÁTICA (AQUI ESTÁ A CORREÇÃO DO ERRO)
-            // Verifica se o número do item está na lista de buscados.
-            // O número 48 está na lista [4]? NÃO.
-            // O número 4 está na lista [4]? SIM.
             return numerosBuscados.includes(numeroDoItem);
         });
-
-        // Se encontrou correspondência exata, retorna.
-        // Se não encontrou (ex: buscou art 999), retorna vazio (melhor que mostrar errado).
         return exatos;
     }
-
-    // 3. Se não tem números (busca textual, ex: "moradia"), retorna tudo que o Fuse encontrou
     return rawResults;
-
   }, [fuzzyResults, initialQuery]);
 
-  // --- Restante do código permanece igual ---
-  
   useEffect(() => { setQuery(initialQuery); }, [initialQuery]);
   useEffect(() => { setCurrentPage(1); setExpandedCardId(null); }, [fuzzyResults]);
 
   const handleSearch = useCallback(async () => {
     if (query.trim() && setSearchQuery) {
+      
+      const regexArtigo = /^(?:artigo|art|art\.)?\s*(\d+)\s*$/i;
+      const match = query.match(regexArtigo);
+
+      if (match) {
+        const numeroArtigo = match[1]; 
+        const termoFormatado = `Art. ${numeroArtigo}`;
+        setSearchQuery(termoFormatado);
+        return; 
+      }
       setIsInternalSearching(true);
       try {
         const resultado = await buscarArtigosInteligente(query);
-        // Lógica repetida do MainContent para garantir funcionamento na barra interna
+        
         if (resultado.tipo === 'direta') {
              setSearchQuery(resultado.termo);
         }
@@ -135,7 +116,7 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
       else if (endPage === totalPages) startPage = Math.max(1, endPage - APP_CONFIG.MAX_VISIBLE_PAGES + 1);
     }
     return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
- }, [totalPages, currentPage]);
+   }, [totalPages, currentPage]);
 
   return (
     <main className="relative bg-white min-h-screen flex flex-col items-center pt-16 pb-8">
@@ -146,8 +127,10 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
             <div className="flex items-center justify-center space-x-4 mb-4">
               <input
                 type="text"
-                placeholder="Busque mais!"
-                className="p-2 rounded-lg text-black w-64 placeholder-black border border-gray-300"
+                
+                placeholder="continue buscando e entendendo a constituição!"
+               
+                className="p-2 rounded-lg text-black w-96 placeholder-gray-500 border border-gray-300"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
@@ -199,7 +182,7 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
                 </div>
             )
         )}
-        {/* Paginação omitida para brevidade, mas está no código completo acima */}
+        
         {!expandedCardId && results.length > 0 && totalPages > 1 && (
           <div className="flex justify-center items-center space-x-2 mt-6">
              <button onClick={handlePreviousPage} disabled={currentPage === 1} className={`p-2 rounded-lg w-10 h-10 flex items-center justify-center ${currentPage === 1 ? 'bg-gray-100 text-gray-400' : 'bg-gray-200 hover:bg-gray-300'}`}>&lt;</button>
