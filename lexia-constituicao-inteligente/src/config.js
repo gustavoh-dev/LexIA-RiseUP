@@ -1,7 +1,8 @@
 // Configurações da aplicação
 export const APP_CONFIG = {
   // API
-  API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001',
+  // No Vercel, usa URL relativa (mesmo domínio). Em desenvolvimento, usa localhost ou variável de ambiente
+  API_BASE_URL: import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? '' : 'http://localhost:5001'),
   API_ENDPOINTS: {
     SUMMARIZE: '/api/resumir',
   },
