@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 export const CardSkeleton = () => {
   return (
     <div className="search-card animate-pulse">
@@ -21,7 +20,6 @@ export const CardSkeleton = () => {
   );
 };
 
-
 export const ResultsSkeleton = ({ count = 3 }) => {
   return (
     <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -33,4 +31,3 @@ export const ResultsSkeleton = ({ count = 3 }) => {
 };
 
 export default CardSkeleton;
-
