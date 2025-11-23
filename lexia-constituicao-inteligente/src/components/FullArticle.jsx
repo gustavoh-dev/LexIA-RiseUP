@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createSafeHTML } from '../utils/sanitize';
+import { APP_CONFIG } from '../config';
 
 const formatNestedText = (fullText) => {
   if (!fullText) return '';
@@ -85,7 +86,7 @@ const FullArticle = ({ article, onNavigate }) => {
     setAiResponse(''); 
 
     try {
-      const response = await fetch('http://localhost:5001/api/resumir', { 
+      const response = await fetch(`${APP_CONFIG.API_BASE_URL}/api/resumir`, { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

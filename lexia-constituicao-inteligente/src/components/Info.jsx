@@ -1,12 +1,23 @@
 import React from 'react';
 
 const Info = () => (
-  <main className="relative bg-white text-black min-h-screen flex flex-col items-center pt-16 pb-8">
+  <main className="relative bg-white text-black min-h-screen flex flex-col items-center pb-8" style={{ marginTop: '-64px', paddingTop: 0 }}>
     <div className="w-full">
-      <div className="w-full mb-6">
-        <img src="/images/planario.jpg" alt="Imagem Sobre Nós" className="full-width-image" />
+      <div style={{ lineHeight: 0, fontSize: 0, marginTop: '64px' }}>
+        <img 
+          src="/images/planario.jpg" 
+          alt="Imagem Sobre Nós" 
+          className="full-width-image" 
+          style={{ 
+            display: 'block', 
+            margin: 0, 
+            padding: 0, 
+            width: '100%',
+            verticalAlign: 'top'
+          }} 
+        />
       </div>
-      <div className="px-6 max-w-4xl mx-auto">
+      <div className="px-6 max-w-4xl mx-auto" style={{ marginTop: '24px' }}>
         <h1 className="text-4xl font-bold text-black mb-6 text-center">Sobre nós</h1>
         <h2 className="text-xl font-bold text-black mb-4">Sobre o LexIA:</h2>
         <div className="info-card">
