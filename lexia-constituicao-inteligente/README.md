@@ -22,10 +22,13 @@ Promover o acesso democrático e inclusivo ao conhecimento jurídico, aproximand
 
 - 🔍 **Busca Inteligente**: Busca fuzzy na Constituição Federal usando Fuse.js
 - 📄 **Visualização de Artigos**: Visualização completa de artigos constitucionais
-- 🤖 **Resumo com IA**: Geração de resumos simplificados usando Google Generative AI
+- 🤖 **Resumo com IA**: Geração de resumos simplificados usando Google Gemini AI
+- 💬 **Perguntas à IA**: Faça perguntas específicas sobre artigos e receba respostas da IA
 - 💾 **Salvar Favoritos**: Sistema de salvamento local para artigos favoritos
+- 📜 **Histórico de Buscas**: Acompanhe suas buscas anteriores
 - 📱 **Interface Responsiva**: Design moderno e adaptável a diferentes dispositivos
-- 🎯 **Buscas Comuns**: Acesso rápido a temas frequentes
+- 🎯 **Buscas Comuns**: Acesso rápido a temas frequentes da Constituição
+- 🚀 **Deploy no Vercel**: Configurado para deploy com serverless functions
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -38,9 +41,10 @@ Promover o acesso democrático e inclusivo ao conhecimento jurídico, aproximand
 
 ### Backend
 - **Node.js** - Runtime JavaScript
-- **Express 4.19.2** - Framework web
-- **Google Generative AI** - API para geração de resumos
+- **Express 4.19.2** - Framework web (desenvolvimento local)
+- **Google Generative AI (@google/generative-ai)** - API para geração de resumos
 - **CORS** - Middleware para requisições cross-origin
+- **Vercel Serverless Functions** - Para deploy em produção
 
 ## 📦 Instalação
 
@@ -73,9 +77,11 @@ Promover o acesso democrático e inclusivo ao conhecimento jurídico, aproximand
    
    Crie um arquivo `.env` na pasta `backend-proxy`:
    ```env
-   GOOGLE_AI_API_KEY=sua-chave-api-aqui
+   GEMINI_API_KEY=sua-chave-api-aqui
    PORT=5001
    ```
+   
+   **Nota**: Para obter a chave da API do Gemini, acesse: https://aistudio.google.com/app/apikey
 
 5. **Inicie o servidor backend**
    ```bash
@@ -91,6 +97,16 @@ Promover o acesso democrático e inclusivo ao conhecimento jurídico, aproximand
 7. **Acesse a aplicação**
    
    Abra seu navegador em `http://localhost:5173` (ou a porta indicada pelo Vite)
+
+## 🚀 Deploy no Vercel
+
+O projeto está configurado para deploy no Vercel com serverless functions. Para fazer o deploy:
+
+1. **Conecte seu repositório ao Vercel**
+2. **Configure a variável de ambiente** `GEMINI_API_KEY` no painel do Vercel
+3. **Faça o deploy** - o Vercel detectará automaticamente as configurações
+
+Para instruções detalhadas, consulte o arquivo `VERCEL_SETUP.md`.
 
 ## 🚀 Scripts Disponíveis
 
@@ -109,30 +125,56 @@ Promover o acesso democrático e inclusivo ao conhecimento jurídico, aproximand
 
 ```
 lexia-constituicao-inteligente/
-├── backend-proxy/          # Servidor backend para API de resumos
-│   ├── server.js           # Servidor Express
+├── api/                    # Serverless functions (Vercel)
+│   └── resumir.js         # API endpoint para resumos com IA
+├── backend-proxy/          # Servidor backend (desenvolvimento local)
+│   ├── server.js          # Servidor Express
 │   └── package.json
 ├── public/                 # Arquivos estáticos
 │   └── images/            # Imagens da aplicação
+│       ├── logo LexIA.png
+│       ├── logo.png
+│       ├── planario.jpg
+│       └── background.jpg
 ├── src/
 │   ├── components/        # Componentes React
+│   │   ├── AiAnalysis.jsx
 │   │   ├── CommonSearches.jsx
 │   │   ├── Contact.jsx
+│   │   ├── ErrorBoundary.jsx
 │   │   ├── Footer.jsx
 │   │   ├── FullArticle.jsx
 │   │   ├── Header.jsx
+│   │   ├── History.jsx
 │   │   ├── Info.jsx
+│   │   ├── LoadingSkeleton.jsx
 │   │   ├── MainContent.jsx
 │   │   ├── Saved.jsx
 │   │   ├── SearchCard.jsx
-│   │   └── SearchResults.jsx
+│   │   ├── SearchResults.jsx
+│   │   ├── Spinner.jsx
+│   │   └── ToastContainer.jsx
 │   ├── data/              # Dados da Constituição
-│   ├── utils/             # Utilitários
+│   │   └── 20200826_EMC108.json
+│   ├── hooks/             # Custom hooks
+│   │   ├── useDebounce.js
+│   │   ├── useLocalStorage.js
+│   │   ├── useScrollToTop.js
+│   │   ├── useSearchHistory.js
+│   │   └── useToast.js
+│   ├── services/          # Serviços de API
+│   │   ├── api.js
+│   │   └── ApiService.js
+│   ├── utils/            # Utilitários
 │   │   ├── formatUtils.js
-│   │   └── processaConstituicao.js
-│   ├── App.jsx            # Componente principal
-│   ├── main.jsx           # Ponto de entrada
-│   └── index.css          # Estilos globais
+│   │   ├── processaConstituicao.js
+│   │   └── sanitize.js
+│   ├── config.js         # Configurações da aplicação
+│   ├── App.jsx           # Componente principal
+│   ├── main.jsx          # Ponto de entrada
+│   └── index.css         # Estilos globais
+├── vercel.json           # Configuração do Vercel
+├── VERCEL_SETUP.md       # Guia de deploy no Vercel
 ├── package.json
 ├── vite.config.js
 └── README.md
@@ -141,21 +183,33 @@ lexia-constituicao-inteligente/
 ## 🎯 Como Usar
 
 1. **Buscar Artigos**: Digite sua dúvida na barra de busca e pressione Enter ou clique em "Buscar"
-2. **Visualizar Resultados**: Os resultados aparecerão em cards com informações dos artigos
-3. **Ver Artigo Completo**: Clique em um card para ver o artigo completo
-4. **Gerar Resumo**: Na visualização completa, use o botão de resumo para obter uma explicação simplificada
-5. **Salvar Favoritos**: Clique no ícone de salvar para adicionar artigos aos favoritos
-6. **Acessar Favoritos**: Use o menu para acessar seus artigos salvos
+2. **Buscas Comuns**: Acesse o menu "Buscas comuns" para ver temas frequentes
+3. **Visualizar Resultados**: Os resultados aparecerão em cards com informações dos artigos
+4. **Ver Artigo Completo**: Clique em "Ver completo" para ver o artigo na íntegra
+5. **Gerar Resumo com IA**: Use o botão "Analisar com IA" para obter um resumo simplificado
+6. **Fazer Perguntas**: Digite uma dúvida específica sobre o artigo e receba uma resposta da IA
+7. **Salvar Favoritos**: Clique no ícone de marcador para adicionar artigos aos favoritos
+8. **Acessar Favoritos**: Use o menu "Salvos" para acessar seus artigos salvos
+9. **Histórico**: Veja suas buscas anteriores no menu "Histórico"
 
 ## 🔧 Configuração da API
 
 Para usar a funcionalidade de resumo com IA, você precisa:
 
-1. Obter uma chave de API do Google Generative AI
-2. Criar o arquivo `.env` na pasta `backend-proxy`
-3. Adicionar sua chave: `GOOGLE_AI_API_KEY=sua-chave-aqui`
+1. Obter uma chave de API do Google Gemini AI em: https://aistudio.google.com/app/apikey
+2. **Para desenvolvimento local**: Criar o arquivo `.env` na pasta `backend-proxy`
+   ```env
+   GEMINI_API_KEY=sua-chave-aqui
+   PORT=5001
+   ```
+3. **Para produção (Vercel)**: Configurar a variável de ambiente no painel do Vercel
+   - Vá em Settings → Environment Variables
+   - Adicione `GEMINI_API_KEY` com sua chave
+   - Selecione todos os ambientes (Production, Preview, Development)
 
-**Nota**: A funcionalidade de resumo é opcional. A aplicação funciona normalmente sem ela, apenas sem a geração de resumos.
+**Nota**: A funcionalidade de resumo é opcional. A aplicação funciona normalmente sem ela, apenas sem a geração de resumos e respostas da IA.
+
+Para mais detalhes sobre o deploy no Vercel, consulte o arquivo `VERCEL_SETUP.md`.
 
 ## 🤝 Contribuindo
 
