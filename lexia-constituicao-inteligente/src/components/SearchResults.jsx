@@ -4,7 +4,7 @@ import { useSavedItems } from '../hooks/useLocalStorage';
 import { APP_CONFIG } from '../config';
 import { useToast } from '../hooks/useToast';
 import { ResultsSkeleton } from './LoadingSkeleton';
-import { buscarArtigosInteligente } from '../services/ApiService';
+import { useSmartSearch } from '../hooks/useSmartSearch';
 
 const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, setActiveSection, onShowFullText }) => {
   const [query, setQuery] = useState(initialQuery);
@@ -14,6 +14,7 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
 
   const { isItemSaved, toggleItem } = useSavedItems();
   const toast = useToast();
+  const { processSearch } = useSmartSearch(setSearchQuery);
 
   const results = useMemo(() => {
     const rawResults = fuzzyResults.map(r => r.item || r);
@@ -37,38 +38,19 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
 
   const handleSearch = useCallback(async () => {
     if (query.trim() && setSearchQuery) {
-      
-      const regexArtigo = /^(?:artigo|art|art\.)?\s*(\d+)\s*$/i;
-      const match = query.match(regexArtigo);
-
-      if (match) {
-        const numeroArtigo = match[1]; 
-        const termoFormatado = `Art. ${numeroArtigo}`;
-        setSearchQuery(termoFormatado);
-        return; 
-      }
       setIsInternalSearching(true);
       try {
-        const resultado = await buscarArtigosInteligente(query);
-        
-        if (resultado.tipo === 'direta') {
-             setSearchQuery(resultado.termo);
-        }
-        else if (resultado.tipo === 'tema' && resultado.artigos.length > 0) {
-             const stringDeBusca = resultado.artigos.map(a => `Art. ${a}`).join(' ');
-             setSearchQuery(stringDeBusca);
-        }
-        else {
-             setSearchQuery(query);
-        }
+        await processSearch(query);
       } catch (error) {
         console.error("Erro search results:", error);
-        setSearchQuery(query);
+        if (setSearchQuery) {
+          setSearchQuery(query);
+        }
       } finally {
         setIsInternalSearching(false);
       }
     }
-  }, [query, setSearchQuery]);
+  }, [query, setSearchQuery, processSearch]);
 
   const handleToggleSave = useCallback((item) => {
     const isNowSaved = toggleItem(item);

@@ -26,7 +26,7 @@ export const APP_CONFIG = {
       'texto_completo'
     ],
     includeScore: true,
-    threshold: 0.3,
+    threshold: 0.6,
   },
   
   // UI

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { buscarArtigosInteligente } from '../services/ApiService';
+import { useSmartSearch } from '../hooks/useSmartSearch';
 
 const MainContent = ({ setSearchQuery, setActiveSection, initialQuery = "", onSmartSearch }) => {
 
   const [query, setQuery] = useState(initialQuery);
   const [isSearching, setIsSearching] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const { processSearch } = useSmartSearch(setSearchQuery, onSmartSearch);
 
   useEffect(() => {
     setQuery(initialQuery);
@@ -21,36 +22,23 @@ const MainContent = ({ setSearchQuery, setActiveSection, initialQuery = "", onSm
   const handleSearch = async () => {
     if (!query.trim()) return;
 
-    const regexArtigo = /^(?:artigo|art|art\.)?\s*(\d+)\s*$/i;
-    const match = query.match(regexArtigo);
-
-    if (match) {
-      const numeroArtigo = match[1]; 
-      const termoFormatado = `Art. ${numeroArtigo}`;
-      triggerExitAnimation(() => setSearchQuery(termoFormatado));
-      return; 
-    }
-
     setIsSearching(true);
 
     try {
-      const resultado = await buscarArtigosInteligente(query);
-
-      if (resultado.tipo === 'direta') {
-        triggerExitAnimation(() => setSearchQuery(resultado.termo));
-      } 
-      else if (resultado.tipo === 'tema' && resultado.artigos.length > 0) {
-        if (onSmartSearch) {
-              triggerExitAnimation(() => onSmartSearch(resultado.artigos));
-        } else {
-              const stringDeBusca = resultado.artigos.map(a => `Art. ${a}`).join(' ');
-              triggerExitAnimation(() => setSearchQuery(stringDeBusca));
-        }
-      } 
-      else {
+      const resultado = await processSearch(query);
+      
+      // Se o resultado já foi processado pelo hook, apenas anima a saída
+      if (resultado && resultado.termo) {
+        triggerExitAnimation(() => {
+          if (resultado.tipo === 'tema' && onSmartSearch && resultado.artigos) {
+            onSmartSearch(resultado.artigos);
+          } else if (setSearchQuery) {
+            setSearchQuery(resultado.termo);
+          }
+        });
+      } else {
         triggerExitAnimation(() => setSearchQuery(query));
       }
-
     } catch (error) {
       console.error("Erro na busca:", error);
       triggerExitAnimation(() => setSearchQuery(query));

@@ -2,6 +2,7 @@ import express from 'express';
 import * as genai from '@google/generative-ai';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import { generationConfig, buildAnalysisPrompt } from '../shared/geminiConfig.js';
 
 
 dotenv.config();
@@ -24,36 +25,6 @@ if (!GEMINI_API_KEY) {
 const genAi = new genai.GoogleGenerativeAI(GEMINI_API_KEY);
 
 
-const generationConfig = {
-  responseMimeType: "application/json", 
-  responseSchema: {
-    type: "OBJECT",
-    properties: {
-      titulo: {
-        type: "STRING",
-        description: "Um título curto e cativante para o resumo do artigo."
-      },
-      resumo: {
-        type: "STRING",
-        description: "O resumo do artigo, em linguagem simples e acessível."
-      },
-      palavrasChave: {
-        type: "ARRAY",
-        items: {
-          type: "STRING"
-        },
-        description: "3 a 5 palavras-chave principais do artigo."
-      },
-      respostaDuvida: {
-        type: "STRING",
-        description: "A resposta à dúvida específica do usuário, baseada no artigo. Se nenhuma dúvida foi fornecida, este campo deve ser uma string vazia."
-      }
-    },
-    required: ["titulo", "resumo", "palavrasChave", "respostaDuvida"]
-  },
-};
-
-
 const model = genAi.getGenerativeModel({ 
   model: 'gemini-2.5-flash-preview-09-2025' 
 });
@@ -69,33 +40,8 @@ app.post('/api/resumir', async (req, res) => {
       return res.status(400).json({ erro: 'Nenhum texto foi fornecido.' });
     }
 
-    let prompt = `
-      Você é um assistente especializado em direito constitucional brasileiro.
-      Sua tarefa é analisar o seguinte artigo da Constituição e retornar um objeto JSON 
-      que siga o schema fornecido.
-
-      O resumo deve ser em linguagem clara e acessível para um leigo.
-
-      Texto do Artigo:
-      "${textoArtigo}"
-    `;
-
-    if (duvidaUsuario && duvidaUsuario.trim() !== '') {
-      prompt += `
-
-      Além do resumo, o usuário tem uma dúvida específica sobre este artigo:
-      "${duvidaUsuario}"
-
-      Por favor, responda a essa dúvida no campo 'respostaDuvida' do JSON, 
-      baseando-se estritamente no texto do artigo.
-      `;
-    } else {
-      prompt += `
-
-      Nenhuma dúvida específica foi fornecida. O campo 'respostaDuvida' deve 
-      ser uma string vazia.
-      `;
-    }
+    // Construir o prompt usando função compartilhada
+    const prompt = buildAnalysisPrompt(textoArtigo, duvidaUsuario);
 
     console.log("Enviando prompt para o Gemini...");
     const result = await model.generateContent({
