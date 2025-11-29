@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -39,8 +39,8 @@ class ErrorBoundary extends React.Component {
                     Detalhes do erro (modo desenvolvimento)
                   </summary>
                   <pre className="mt-2 text-xs text-red-600 overflow-auto">
-                    {this.state.error.toString()}
-                    {this.state.error.stack}
+                    {this.state.error?.toString()}
+                    {this.state.error?.stack ? `\n\n${this.state.error.stack}` : ''}
                   </pre>
                 </details>
               )}
@@ -69,4 +69,3 @@ class ErrorBoundary extends React.Component {
 }
 
 export default ErrorBoundary;
-

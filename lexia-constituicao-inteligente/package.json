@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.15.0",
+    "axios": "^1.7.9",
     "fuse.js": "^7.1.0",
     "lucide-react": "^0.553.0",
     "react": "^19.1.1",

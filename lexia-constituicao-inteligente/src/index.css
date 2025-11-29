@@ -105,11 +105,29 @@
             color: #334155;
             margin-bottom: 8px;
             flex-grow: 1;
+            /* Removido line-clamp para permitir texto completo */
+            overflow: visible;
+            text-overflow: unset;
+            display: block;
+        }
+        
+        /* Aplica truncamento apenas em cards não expandidos */
+        .search-card:not(.expanded) .summary:not(.expanded-summary) {
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-line-clamp: 4;
             -webkit-box-orient: vertical;
+        }
+        
+        /* Remove todas as limitações quando expandido */
+        .summary.expanded-summary,
+        .search-card.expanded .summary {
+            overflow: visible !important;
+            text-overflow: unset !important;
+            display: block !important;
+            -webkit-line-clamp: unset !important;
+            -webkit-box-orient: unset !important;
         }
 
         .view-full {

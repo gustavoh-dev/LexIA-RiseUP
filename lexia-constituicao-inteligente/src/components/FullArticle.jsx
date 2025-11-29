@@ -1,58 +1,19 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { createSafeHTML } from '../utils/sanitize';
-import { APP_CONFIG } from '../config';
+import { analisarArtigo } from '../services/ApiService';
+
+const formatLegalText = (text = '') =>
+  text
+    .replace(/§\s*/g, '\n§ ')
+    .replace(/(\d+º)\s*/g, '$1 ')
+    .replace(/([IVXLCDM]+\s-\s)/g, '\n$1')
+    .replace(/;\s*/g, ';\n')
+    .replace(/:\s*/g, ':\n')
+    .trim();
 
 const formatNestedText = (fullText) => {
   if (!fullText) return '';
-  let formattedText = fullText;
-
-  formattedText = formattedText.replace(
-    /(Art\.\s[0-9]+[A-Z]?\.)/g,
-    '<strong>$1</strong>'
-  );
-
-  formattedText = formattedText.replace(
-    /(\s§\s[0-9]+º\s)/g,
-    '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;<strong>$1</strong>'
-  );
-  formattedText = formattedText.replace(
-    /(\s§\s[0-9]+º\. )/g,
-    '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;<strong>$1</strong>'
-  );
-  formattedText = formattedText.replace(
-    /(\s§\s[0-9]+\.\s)/g,
-    '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;<strong>$1</strong>'
-  );
-
-  formattedText = formattedText.replace(
-    /(Parágrafo único\.\s)/g,
-    '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;<strong>$1</strong>'
-  );
-
-  formattedText = formattedText.replace(
-    /([IVXLCDM]+\s-\s)/g,
-    '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>$1</strong>'
-  );
-
-  formattedText = formattedText.replace(
-    /(\s[a-z]\)\s)/g,
-    '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>$1</em>'
-  );
-
-  formattedText = formattedText.replace(
-    /(\s[0-9]+)\s-\s/g,
-    '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>$1 - </em>'
-  );
-
-  formattedText = formattedText.replace(/\s+/g, ' ');
-  formattedText = formattedText.replace(
-    /(\<br\/\>\s*)+\<br\/\>/g,
-    '<br/><br/>'
-  );
-  formattedText = formattedText.replace(/^\<br\/\>/g, '');
-  formattedText = formattedText.replace(/^\<br\/\>\<br\/\>/g, '');
-  
-  return formattedText.trim();
+  return formatLegalText(fullText).replace(/\n/g, '<br/>' );
 };
 
 const FullArticle = ({ article, onNavigate }) => {
@@ -70,14 +31,14 @@ const FullArticle = ({ article, onNavigate }) => {
 
   const handleAskAI = async () => {
     if (!userDoubt.trim()) {
-      setAiResponse('Por favor, digite sua dúvida antes de enviar.');
+      setAiResponse('Por favor, digite sua duvida antes de enviar.');
       return;
     }
     
     const articleContentToSend = article.texto_completo || '';
     if (!articleContentToSend) {
-        setAiResponse('Erro: O conteúdo do artigo está indisponível para análise.');
-        console.error('Artigo incompleto: texto_completo está vazio ou undefined.');
+        setAiResponse('Erro: O conteudo do artigo esta indisponivel para analise.');
+        console.error('Artigo incompleto: texto_completo esta vazio ou undefined.');
         return;
     }
 
@@ -86,23 +47,7 @@ const FullArticle = ({ article, onNavigate }) => {
     setAiResponse(''); 
 
     try {
-      const response = await fetch(`${APP_CONFIG.API_BASE_URL}/api/resumir`, { 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          textoArtigo: articleContentToSend, 
-          duvidaUsuario: userDoubt,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ erro: 'Erro desconhecido do servidor.' }));
-        throw new Error(errorData.erro || `Falha HTTP: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = await analisarArtigo(articleContentToSend, userDoubt);
 
       setCurrentAiData({
         titulo: data.titulo,
@@ -111,15 +56,12 @@ const FullArticle = ({ article, onNavigate }) => {
         respostaDuvida: data.respostaDuvida,
       });
 
-      setAiResponse(data.respostaDuvida || "A IA não retornou uma resposta para esta dúvida."); 
+      setAiResponse(data.respostaDuvida || "A IA nao retornou uma resposta para esta duvida."); 
 
     } catch (error) {
-      console.error("Erro na comunicação com a IA:", error);
+      console.error("Erro na comunicacao com a IA:", error);
       
-      let errorMessage = error.message.includes('Failed to fetch') 
-        ? 'Erro de Rede: O servidor Node.js (Backend) não está rodando na porta 5001.'
-        : `Erro ao processar sua dúvida: ${error.message}`;
-
+      const errorMessage = error.message || 'Erro desconhecido ao processar sua duvida.';
       setAiResponse(`Desculpe, ${errorMessage}`);
     }
 
@@ -137,9 +79,9 @@ const FullArticle = ({ article, onNavigate }) => {
           <button
             className="bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-800 transition"
             onClick={() => onNavigate('home')}
-            aria-label="Voltar à página inicial"
+            aria-label="Voltar a pagina inicial"
           >
-            Voltar ao Início
+            Voltar ao Inicio
           </button>
         </div>
       </main>
@@ -149,27 +91,34 @@ const FullArticle = ({ article, onNavigate }) => {
   const sectionTitle = article.capitulo_estrutura || article.titulo_estrutura;
   const fullText = article.texto_completo || '';
   const textoCaput = article.texto_caput || '';
+  
   const isRevogado =
     textoCaput.includes('(Revogado)') || textoCaput.includes('(Revogada)');
 
+  // Extrai o conteudo adicional (apos o caput)
   let nestedContent = '';
-  if (!isRevogado && fullText.length > textoCaput.length) {
-    const caputOnly = textoCaput.replace(/Art\.\s[0-9]+[A-Z]?\.\s/, '').trim();
-    
-    let caputEndIndex = -1;
-    const caputStartIndex = fullText.indexOf(caputOnly);
-
-    if (caputStartIndex !== -1) {
-        caputEndIndex = caputStartIndex + caputOnly.length;
-    } else {
-        const originalCaputEndIndex = fullText.indexOf(textoCaput) + textoCaput.length;
-        if (originalCaputEndIndex > 0) {
-           caputEndIndex = originalCaputEndIndex;
+  if (!isRevogado && fullText && fullText.trim().length > 0) {
+    if (textoCaput && textoCaput.trim().length > 0) {
+      const caputIndex = fullText.indexOf(textoCaput);
+      
+      if (caputIndex !== -1) {
+        nestedContent = fullText.substring(caputIndex + textoCaput.length).trim();
+      } else {
+        const caputSemNumero = textoCaput.replace(/Art\.\s[0-9]+[A-Z]?\.\s/, '').trim();
+        const caputSemNumeroIndex = fullText.indexOf(caputSemNumero);
+        
+        if (caputSemNumeroIndex !== -1) {
+          nestedContent = fullText.substring(caputSemNumeroIndex + caputSemNumero.length).trim();
+        } else if (fullText.length > textoCaput.length) {
+          nestedContent = fullText.substring(textoCaput.length).trim();
         }
-    }
-
-    if (caputEndIndex > 0) {
-       nestedContent = fullText.substring(caputEndIndex).trim();
+      }
+      
+      if (nestedContent && nestedContent.startsWith(textoCaput)) {
+        nestedContent = nestedContent.substring(textoCaput.length).trim();
+      }
+    } else {
+      nestedContent = fullText;
     }
   }
 
@@ -199,40 +148,79 @@ const FullArticle = ({ article, onNavigate }) => {
 
           {isRevogado ? (
             <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-center font-semibold text-xl my-6">
-              Este artigo foi **REVOGADO** e não está mais em vigor.
+              Este artigo foi REVOGADO e nao esta mais em vigor.
             </div>
           ) : (
             <>
-              <p className="text-lg text-gray-800 mb-4">{textoCaput}</p>
-
-              {formattedNestedContent.length > 0 && (
-                <div
-                  className="text-lg text-gray-800 pt-4"
-                  dangerouslySetInnerHTML={createSafeHTML(formattedNestedContent)}
-                />
+              {textoCaput && (
+                <p className="text-lg text-gray-800 mb-4" style={{ whiteSpace: 'pre-line' }}>
+                  {formatLegalText(textoCaput)}
+                </p>
               )}
+
+              {(() => {
+                if (formattedNestedContent && formattedNestedContent.length > 0) {
+                  return (
+                    <div
+                      className="text-lg text-gray-800 pt-4"
+                      style={{ whiteSpace: 'pre-line' }}
+                      dangerouslySetInnerHTML={createSafeHTML(formattedNestedContent)}
+                    />
+                  );
+                }
+                
+                if (fullText && fullText.trim().length > 0 && textoCaput && fullText.length > textoCaput.length) {
+                  const restante = fullText.substring(textoCaput.length).trim();
+                  if (restante.length > 0) {
+                    return (
+                      <div className="text-lg text-gray-800 pt-4" style={{ whiteSpace: 'pre-line' }}>
+                        {formatLegalText(restante)}
+                      </div>
+                    );
+                  }
+                }
+                
+                if (fullText && fullText.trim().length > 0 && fullText !== textoCaput) {
+                  return (
+                    <div className="text-lg text-gray-800 pt-4" style={{ whiteSpace: 'pre-line' }}>
+                      {formatLegalText(fullText)}
+                    </div>
+                  );
+                }
+                
+                if (fullText && fullText.trim().length > 0 && !textoCaput) {
+                  return (
+                    <div className="text-lg text-gray-800" style={{ whiteSpace: 'pre-line' }}>
+                      {formatLegalText(fullText)}
+                    </div>
+                  );
+                }
+                
+                return null;
+              })()}
 
               <div className="mt-6 pt-6 border-t border-indigo-100">
                 {!showDoubtInput && (
-                  <button
-                    className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition flex items-center shadow-md"
-                    onClick={() => {
-                       setShowDoubtInput(true);
-                       if (!currentAiData) {
+                  <div className="flex justify-center">
+                    <button
+                      className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition flex items-center shadow-md"
+                      onClick={() => {
+                        setShowDoubtInput(true);
+                        if (!currentAiData) {
                           setAiResponse('');
-                       }
-                    }}
-                    aria-label="Tirar dúvida com a Inteligência Artificial"
-                  >
-                   
-                    Tire uma Dúvida com a IA
-                  </button>
+                        }
+                      }}
+                      aria-label="Tirar duvida com a Inteligencia Artificial"
+                    >
+                      Tire sua Duvida com a IA
+                    </button>
+                  </div>
                 )}
 
                 {showDoubtInput && (
                   <div className="mt-4 p-4 border border-blue-600 bg-blue-50 rounded-lg">
                     <label htmlFor="ai-doubt" className="block text-blue-600 font-semibold mb-2">
-                      Qual é a sua dúvida sobre este artigo?
+                      Qual e a sua duvida sobre este artigo?
                     </label>
                     <textarea
                       id="ai-doubt"
@@ -240,7 +228,7 @@ const FullArticle = ({ article, onNavigate }) => {
                       rows="3"
                       value={userDoubt}
                       onChange={(e) => setUserDoubt(e.target.value)}
-                      placeholder="Ex: o que art.(a) tem a dizer sobre moradia?"
+                      placeholder="Ex: o que este artigo diz sobre moradia?"
                       disabled={loading}
                     ></textarea>
                     <div className="flex justify-end gap-2 mt-3">
@@ -266,7 +254,7 @@ const FullArticle = ({ article, onNavigate }) => {
                           </>
                         ) : (
                           <>
-                            mandar sua duvida
+                            Mandar sua duvida
                           </>
                         )}
                       </button>
@@ -277,13 +265,11 @@ const FullArticle = ({ article, onNavigate }) => {
             
               {(currentAiData || aiResponse) && (
                 <div className="mt-6 pt-6 border-t border-indigo-100">
-                 
-                 
 
                   {aiResponse && (
                     <div className={`pt-4 ${currentAiData ? 'border-t border-gray-100 mt-4' : ''}`}>
                       <strong className="text-blue-600 block mb-1">
-                        Resposta à sua dúvida:
+                        Resposta a sua duvida:
                       </strong>
                       <p className="whitespace-pre-wrap text-gray-700">
                         {aiResponse}
@@ -291,7 +277,7 @@ const FullArticle = ({ article, onNavigate }) => {
                     </div>
                   )}
 
-                  {currentAiData && (
+                  {Array.isArray(currentAiData?.palavrasChave) && (
                     <div className="flex flex-wrap gap-2 mt-4">
                       {currentAiData.palavrasChave.map((palavra, index) => (
                         <span

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+﻿import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import SearchCard from './SearchCard';
 import { useSavedItems } from '../hooks/useLocalStorage';
 import { APP_CONFIG } from '../config';
@@ -110,7 +110,7 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
               <input
                 type="text"
                 
-                placeholder="continue buscando e entendendo a constituição!"
+                placeholder="continue buscando e entendendo a constituiÃ§Ã£o!"
                
                 className="p-2 rounded-lg text-black w-96 placeholder-gray-500 border border-gray-300"
                 value={query}
@@ -145,7 +145,7 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
                  <div className="col-span-full">
                    <div className="search-card text-center py-12">
                      <h3 className="text-xl font-bold mb-2">Nenhum resultado encontrado</h3>
-                     <p>Não encontramos os artigos exatos para sua busca.</p>
+                     <p>Nao encontramos os artigos exatos para sua busca.</p>
                    </div>
                 </div>
             ) : (
@@ -180,3 +180,5 @@ const SearchResults = ({ fuzzyResults = [], initialQuery = "", setSearchQuery, s
 };
 
 export default SearchResults;
+
+

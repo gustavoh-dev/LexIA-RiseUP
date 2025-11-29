@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { analisarArtigo } from '../services/ApiService.js'; 
 import { useToast } from '../hooks/useToast';
 
@@ -17,7 +17,7 @@ export function AiAnalysis({ textoArtigo }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!duvida.trim()) {
-      toast.error('Por favor, digite sua dúvida.');
+      toast.error('Por favor, digite sua duvida.');
       return;
     }
 
@@ -28,7 +28,7 @@ export function AiAnalysis({ textoArtigo }) {
     try {
       const dadosDaIA = await analisarArtigo(textoArtigo, duvida);
       setResultado(dadosDaIA);
-      toast.success('Análise da IA concluída!');
+      toast.success('Analise da IA concluida!');
     } catch (err) {
       setErro(err.message);
       toast.error(err.message || 'Falha ao analisar com a IA.');
@@ -61,16 +61,16 @@ export function AiAnalysis({ textoArtigo }) {
   return (
     <div style={{ marginTop: '16px', borderTop: '1px solid #eee', paddingTop: '16px' }}>
       <h4 style={{ fontWeight: 'bold', color: '#333', marginBottom: '8px' }}>
-        Perguntar à IA sobre este artigo
+        Perguntar a IA sobre este artigo
       </h4>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Digite sua dúvida aqui..."
+          placeholder="Digite sua duvida aqui..."
           value={duvida}
           onChange={(e) => setDuvida(e.target.value)}
           style={inputStyles}
-          aria-label="Dúvida sobre o artigo"
+          aria-label="Duvida sobre o artigo"
         />
         <button type="submit" disabled={loading} style={buttonStyles}>
           {loading ? 'Analisando...' : 'Analisar'}
@@ -91,10 +91,14 @@ export function AiAnalysis({ textoArtigo }) {
       
           <div style={{ marginTop: '10px', fontSize: '12px', color: '#555' }}>
             <p><strong>Resumo IA:</strong> {resultado.resumo}</p>
-            <p><strong>Palavras-chave IA:</strong> {resultado.palavrasChave.join(', ')}</p>
+            <p>
+              <strong>Palavras-chave IA:</strong>{' '}
+              {Array.isArray(resultado.palavrasChave) ? resultado.palavrasChave.join(', ') : 'N/A'}
+            </p>
           </div>
         </div>
       )}
     </div>
   );
 }
+
