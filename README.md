@@ -1,4 +1,4 @@
-# LexIA - Constituição Inteligente
+﻿# LexIA - Constituição Inteligente
 
 Uma plataforma digital voltada para facilitar o acesso e o entendimento da Constituição Federal Brasileira, utilizando inteligência artificial e linguagem simplificada.
 
@@ -22,7 +22,7 @@ Promover o acesso democrático e inclusivo ao conhecimento jurídico, aproximand
 
 - 🔍 **Busca Inteligente**: Busca fuzzy na Constituição Federal usando Fuse.js
 - 📄 **Visualização de Artigos**: Visualização completa de artigos constitucionais
-- 🤖 **Resumo com IA**: Geração de resumos simplificados usando Google Gemini AI
+- 🤖 **Resumo com IA**: Geração de resumos simplificados usando Google Gemini
 - 💬 **Perguntas à IA**: Faça perguntas específicas sobre artigos e receba respostas da IA
 - 💾 **Salvar Favoritos**: Sistema de salvamento local para artigos favoritos
 - 📜 **Histórico de Buscas**: Acompanhe suas buscas anteriores
@@ -33,213 +33,106 @@ Promover o acesso democrático e inclusivo ao conhecimento jurídico, aproximand
 ## 🛠️ Tecnologias Utilizadas
 
 ### Frontend
-- **React 19.1.1** - Biblioteca JavaScript para construção de interfaces
-- **Vite 7.1.7** - Build tool e dev server
-- **Fuse.js 7.1.0** - Biblioteca de busca fuzzy
-- **Tailwind CSS** - Framework CSS utilitário
-- **Lucide React** - Biblioteca de ícones
+- React + Vite
+- Tailwind CSS
+- Fuse.js
+- Axios
 
-### Backend
-- **Node.js** - Runtime JavaScript
-- **Express 4.19.2** - Framework web (desenvolvimento local)
-- **Google Generative AI (@google/generative-ai)** - API para geração de resumos
-- **CORS** - Middleware para requisições cross-origin
-- **Vercel Serverless Functions** - Para deploy em produção
+### Backend / IA
+- Vercel Serverless Functions (recomendado para produção)
+- Google Generative AI (Gemini)
+- Express (opcional para desenvolvimento local, se preferir rodar um proxy próprio)
 
 ## 📦 Instalação
 
 ### Pré-requisitos
-
-- Node.js (versão 18 ou superior)
-- npm ou yarn
+- Node.js 18+
+- npm
 
 ### Passo a Passo
-
 1. **Clone o repositório**
    ```bash
-   git clone <url-do-repositório>
+   git clone <url-do-repositorio>
    cd lexia-constituicao-inteligente
    ```
 
-2. **Instale as dependências do frontend**
+2. **Instale as dependências**
    ```bash
    npm install
    ```
 
-3. **Instale as dependências do backend**
-   ```bash
-   cd backend-proxy
-   npm install
-   cd ..
-   ```
-
-4. **Configure as variáveis de ambiente do backend**
-   
-   Crie um arquivo `.env` na pasta `backend-proxy`:
+3. **Configure variáveis de ambiente**
+   Crie um arquivo `.env` na raiz (para desenvolvimento local):
    ```env
-   GEMINI_API_KEY=sua-chave-api-aqui
-   PORT=5001
+   VITE_API_BASE_URL=http://localhost:5173        # ou a URL do app em produção
+   VITE_GEMINI_API_KEY=opcional_para_teste_local  # NÃO usar em produção
+   GEMINI_API_KEY=sua-chave-do-gemini             # usada nas serverless
    ```
-   
-   **Nota**: Para obter a chave da API do Gemini, acesse: https://aistudio.google.com/app/apikey
+   - Em produção, use apenas `GEMINI_API_KEY` nas serverless functions e ajuste o frontend para chamar a rota `/api/gemini`.
 
-5. **Inicie o servidor backend**
-   ```bash
-   cd backend-proxy
-   node server.js
-   ```
-
-6. **Em outro terminal, inicie o servidor de desenvolvimento do frontend**
+4. **Rodar o projeto em desenvolvimento**
    ```bash
    npm run dev
    ```
-
-7. **Acesse a aplicação**
-   
-   Abra seu navegador em `http://localhost:5173` (ou a porta indicada pelo Vite)
+   Abra o navegador em `http://localhost:5173`.
 
 ## 🚀 Deploy no Vercel
+1. Conecte o repositório na Vercel.
+2. Em *Settings → Environment Variables*, adicione:
+   - `GEMINI_API_KEY` (Production/Preview/Development)
+   - `VITE_API_BASE_URL` apontando para a URL do app (ex.: `https://seuapp.vercel.app`).
+3. Crie uma serverless `/api/gemini` que chama o Gemini com `process.env.GEMINI_API_KEY` e retorne o JSON para o frontend. (Se já existir, apenas configure as envs.)
+4. Deploy.
 
-O projeto está configurado para deploy no Vercel com serverless functions. Para fazer o deploy:
-
-1. **Conecte seu repositório ao Vercel**
-2. **Configure a variável de ambiente** `GEMINI_API_KEY` no painel do Vercel
-3. **Faça o deploy** - o Vercel detectará automaticamente as configurações
-
-Para instruções detalhadas, consulte o arquivo `VERCEL_SETUP.md`.
+Para instruções adicionais, veja `VERCEL_SETUP.md`.
 
 ## 🚀 Scripts Disponíveis
-
-### Frontend
-
-- `npm run dev` - Inicia o servidor de desenvolvimento
-- `npm run build` - Cria a build de produção
-- `npm run preview` - Preview da build de produção
-- `npm run lint` - Executa o linter ESLint
-
-### Backend
-
-- `node server.js` - Inicia o servidor backend na porta 5001
+- `npm run dev` - servidor de desenvolvimento
+- `npm run build` - build de produção
+- `npm run preview` - preview da build
+- `npm run lint` - linter
 
 ## 📁 Estrutura do Projeto
-
 ```
 lexia-constituicao-inteligente/
-├── api/                    # Serverless functions (Vercel)
-│   └── resumir.js         # API endpoint para resumos com IA
-├── backend-proxy/          # Servidor backend (desenvolvimento local)
-│   ├── server.js          # Servidor Express
-│   └── package.json
-├── public/                 # Arquivos estáticos
-│   └── images/            # Imagens da aplicação
-│       ├── logo LexIA.png
-│       ├── logo.png
-│       ├── planario.jpg
-│       └── background.jpg
+├── public/
 ├── src/
-│   ├── components/        # Componentes React
-│   │   ├── AiAnalysis.jsx
-│   │   ├── CommonSearches.jsx
-│   │   ├── Contact.jsx
-│   │   ├── ErrorBoundary.jsx
-│   │   ├── Footer.jsx
-│   │   ├── FullArticle.jsx
-│   │   ├── Header.jsx
-│   │   ├── History.jsx
-│   │   ├── Info.jsx
-│   │   ├── LoadingSkeleton.jsx
-│   │   ├── MainContent.jsx
-│   │   ├── Saved.jsx
-│   │   ├── SearchCard.jsx
-│   │   ├── SearchResults.jsx
-│   │   ├── Spinner.jsx
-│   │   └── ToastContainer.jsx
-│   ├── data/              # Dados da Constituição
-│   │   └── 20200826_EMC108.json
-│   ├── hooks/             # Custom hooks
-│   │   ├── useDebounce.js
-│   │   ├── useLocalStorage.js
-│   │   ├── useScrollToTop.js
-│   │   ├── useSearchHistory.js
-│   │   └── useToast.js
-│   ├── services/          # Serviços de API
-│   │   ├── api.js
-│   │   └── ApiService.js
-│   ├── utils/            # Utilitários
-│   │   ├── formatUtils.js
-│   │   ├── processaConstituicao.js
-│   │   └── sanitize.js
-│   ├── config.js         # Configurações da aplicação
-│   ├── App.jsx           # Componente principal
-│   ├── main.jsx          # Ponto de entrada
-│   └── index.css         # Estilos globais
-├── vercel.json           # Configuração do Vercel
-├── VERCEL_SETUP.md       # Guia de deploy no Vercel
-├── package.json
-├── vite.config.js
+│   ├── components/
+│   ├── hooks/
+│   ├── services/
+│   ├── utils/
+│   ├── data/
+│   ├── App.jsx
+│   └── main.jsx
+├── shared/
+├── vercel.json
+├── VERCEL_SETUP.md
 └── README.md
 ```
 
 ## 🎯 Como Usar
+1. Buscar artigos ou temas na barra de busca.
+2. Abrir um card e clicar em "Ver completo" para ler o artigo.
+3. Gerar resumo ou tirar dúvidas com a IA (se a chave estiver configurada).
+4. Salvar artigos no marcador e consultar em "Salvos".
+5. Acompanhar pesquisas em "Histórico".
 
-1. **Buscar Artigos**: Digite sua dúvida na barra de busca e pressione Enter ou clique em "Buscar"
-2. **Buscas Comuns**: Acesse o menu "Buscas comuns" para ver temas frequentes
-3. **Visualizar Resultados**: Os resultados aparecerão em cards com informações dos artigos
-4. **Ver Artigo Completo**: Clique em "Ver completo" para ver o artigo na íntegra
-5. **Gerar Resumo com IA**: Use o botão "Analisar com IA" para obter um resumo simplificado
-6. **Fazer Perguntas**: Digite uma dúvida específica sobre o artigo e receba uma resposta da IA
-7. **Salvar Favoritos**: Clique no ícone de marcador para adicionar artigos aos favoritos
-8. **Acessar Favoritos**: Use o menu "Salvos" para acessar seus artigos salvos
-9. **Histórico**: Veja suas buscas anteriores no menu "Histórico"
-
-## 🔧 Configuração da API
-
-Para usar a funcionalidade de resumo com IA, você precisa:
-
-1. Obter uma chave de API do Google Gemini AI em: https://aistudio.google.com/app/apikey
-2. **Para desenvolvimento local**: Criar o arquivo `.env` na pasta `backend-proxy`
-   ```env
-   GEMINI_API_KEY=sua-chave-aqui
-   PORT=5001
-   ```
-3. **Para produção (Vercel)**: Configurar a variável de ambiente no painel do Vercel
-   - Vá em Settings → Environment Variables
-   - Adicione `GEMINI_API_KEY` com sua chave
-   - Selecione todos os ambientes (Production, Preview, Development)
-
-**Nota**: A funcionalidade de resumo é opcional. A aplicação funciona normalmente sem ela, apenas sem a geração de resumos e respostas da IA.
-
-Para mais detalhes sobre o deploy no Vercel, consulte o arquivo `VERCEL_SETUP.md`.
+## 🔧 Configuração da API / IA
+- Gere uma chave do Gemini em https://aistudio.google.com/app/apikey.
+- Produção: mantenha a chave apenas em `GEMINI_API_KEY` (serverless). Não exponha `VITE_GEMINI_API_KEY`.
+- Se os endpoints `/api/buscar` ou `/api/gemini` não estiverem disponíveis, o app funcionará sem IA (apenas desabilite/trate os botões para evitar erro).
 
 ## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Sinta-se à vontade para:
-
-1. Fazer um fork do projeto
-2. Criar uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abrir um Pull Request
+1. Faça fork
+2. Crie branch (`git checkout -b feature/...`)
+3. Commit (`git commit -m "feat: ..."`)
+4. Push e abra PR
 
 ## 📝 Licença
-
-Este projeto está sob licença. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 👥 Equipe
-
-O LexIA foi criado por um grupo de estudantes e pesquisadores inovadores por tecnologia social da informação. Nosso objetivo é unir direito, linguagem e inteligência artificial para facilitar o entendimento da Constituição Federal e fortalecer a relação entre o cidadão e o Estado.
+Veja `LICENSE`.
 
 ## 📧 Contato
-
-Para mais informações, entre em contato através da seção de contato na aplicação.
-
-## 🙏 Agradecimentos
-
-- Equipe de desenvolvimento
-- Comunidade open source
-- Todos os contribuidores
+Use a seção de contato na aplicação ou abra uma issue.
 
 ---
-
 **Desenvolvido com ❤️ para promover o acesso democrático ao conhecimento jurídico**
-
